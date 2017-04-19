@@ -75,35 +75,34 @@
                     android:textColor="@android:color/black"
                     android:visibility="gone"
                     android:textSize="16dp" />
-                <Button
+                <cc.wulian.smarthomev5.view.CircleImageView
                     android:id="@+id/btn_mute"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:textColor="@android:color/black"
                     android:gravity="center"
-                    android:text="静音"
-                    android:textSize="16dp" />
-
-
-                <Button
+                    android:src="@drawable/icon_mute_on"
+                    />
+                <cc.wulian.smarthomev5.view.CircleImageView
                     android:id="@+id/btn_capture"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="抓拍"
                     android:textColor="@android:color/black"
-                    android:textSize="16dp" />
-                <Button
+                    android:gravity="center"
+                    android:src="@drawable/icon_cap"
+                    />
+                <cc.wulian.smarthomev5.view.CircleImageView
                     android:id="@+id/btn_hangupCall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="挂断"
                     android:textColor="@android:color/black"
-                    android:textSize="16dp" />
+                    android:gravity="center"
+                    android:src="@drawable/icon_hangup"
+                    />
+
 
             </LinearLayout>
         </RelativeLayout>

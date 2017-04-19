@@ -30,6 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 
 import cc.wulian.smarthomev5.R;
+import cc.wulian.smarthomev5.view.CircleImageView;
 
 public class EyecatVideoCallActivity extends Activity {
 	private final String TAG = "EyecatVideoCallActivity";
@@ -43,8 +44,9 @@ public class EyecatVideoCallActivity extends Activity {
 	
 	private AudioManager audioManager;
 	private LinearLayout linear_padding;
+	private CircleImageView btnCapture, btnMute, btnHangupCall;
 	
-	private Button btnCapture, btnMute, btnHangupCall, btnSoundSwitch;
+	private Button  btnSoundSwitch;
 	
 	int width = 640;
 	int height = 480;
@@ -78,13 +80,13 @@ public class EyecatVideoCallActivity extends Activity {
 	private void initUI() {
 		surfaceView = (SurfaceView) findViewById(R.id.surface_view);
 		
-		btnCapture = (Button) findViewById(R.id.btn_capture);
+		btnCapture = (CircleImageView) findViewById(R.id.btn_capture);
 		btnCapture.setOnClickListener(new MyOnClickListener());
 		
-		btnMute = (Button) findViewById(R.id.btn_mute);
+		btnMute = (CircleImageView) findViewById(R.id.btn_mute);
 		btnMute.setOnClickListener(new MyOnClickListener());
 		
-		btnHangupCall = (Button) findViewById(R.id.btn_hangupCall);
+		btnHangupCall = (CircleImageView) findViewById(R.id.btn_hangupCall);
 		btnHangupCall.setOnClickListener(new MyOnClickListener());
 		
 		btnSoundSwitch = (Button) findViewById(R.id.btn_soundSwitch);
@@ -126,14 +128,14 @@ public class EyecatVideoCallActivity extends Activity {
 	
 	private void callSpeakerSetting(boolean f) {
 		if (f) {
-			btnSoundSwitch.setText("松开 结束");
+			btnSoundSwitch.setText("松开结束");
 			if (callId != null) {
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioRecordEnable(true, callId);
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioPlayEnable(false, callId);
 			}
 			closeSpeaker();
 		} else {
-			btnSoundSwitch.setText("按住 说话");
+			btnSoundSwitch.setText("按住说话");
 
 			if (callId != null) {
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioPlayEnable(true, callId);
@@ -320,14 +322,14 @@ public class EyecatVideoCallActivity extends Activity {
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioPlayEnable(false, callId);
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioRecordEnable(false, callId);
 			}
-			
-			btnMute.setText("静音模式");
+			btnMute.setImageResource(R.drawable.icon_suspend);
+
 			
 		}else{
 			audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, current, 0);
 			callSpeakerSetting(false);
-			
-			btnMute.setText("外放模式");
+			btnMute.setImageResource(R.drawable.icon_mute_on);
+
 		}
 	}
 	
