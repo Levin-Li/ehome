@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <color name="text_gray">#E7E8EA</color>
     <color name="ab_message_normal">#60000000</color>
     <color name="ab_message_pressed">#30000000</color>
     <color name="list_item_event_msg_divider">#40909496</color>
