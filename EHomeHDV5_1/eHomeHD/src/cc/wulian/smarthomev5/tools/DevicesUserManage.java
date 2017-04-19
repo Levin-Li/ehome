@@ -1,12 +1,17 @@
 package cc.wulian.smarthomev5.tools;
+
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+
+import com.alibaba.fastjson.JSONObject;
+import com.wulian.iot.HandlerConstant;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.alibaba.fastjson.JSONObject;
-import com.wulian.icam.R;
-import com.wulian.iot.HandlerConstant;
 import cc.wulian.ihome.wan.NetSDK;
 import cc.wulian.ihome.wan.core.http.HttpManager;
 import cc.wulian.ihome.wan.core.http.HttpProvider;
@@ -14,16 +19,11 @@ import cc.wulian.ihome.wan.core.http.Result;
 import cc.wulian.ihome.wan.entity.GatewayInfo;
 import cc.wulian.ihome.wan.sdk.user.AMSConstants;
 import cc.wulian.ihome.wan.sdk.user.entity.AMSDeviceInfo;
-import cc.wulian.ihome.wan.sdk.user.entity.UserResultModel;
 import cc.wulian.ihome.wan.util.Logger;
 import cc.wulian.ihome.wan.util.StringUtil;
 import cc.wulian.ihome.wan.util.TaskExecutor;
 import cc.wulian.smarthomev5.account.WLUserManager;
 import cc.wulian.smarthomev5.service.html5plus.plugins.SmarthomeFeatureImpl;
-
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
 /**
  *
  * @author mabo 2016/6/22
@@ -179,12 +179,24 @@ public class DevicesUserManage {
 			public void run() {
 				try {
 					delRes = um.getStub().unbindDevice(deviceId).status;
+					deleteDevice(deviceId);
 				} catch (Exception e) {
 					return;
 				}
 			}
 		});
 		return delRes;
+	}
+	public static int deleteDevice(final String deviceId){
+		HttpProvider httpProvider=HttpManager.getWulianCloudProvider();
+		Result retResult = new Result();
+		retResult.status = -1;
+		Map e = createRequestHeader("delDevice", SmarthomeFeatureImpl.getData(SmarthomeFeatureImpl.Constants.TOKEN));
+		JSONObject obj = new JSONObject();
+		obj.put("deviceId", deviceId);
+		JSONObject result=httpProvider.post("https://v2.wuliancloud.com:52182/AMS/user/device", e, obj.toJSONString());
+		int status = statusFromJsonObject(result);
+		return status;
 	}
 	public static int unBindShareEagle(final String deviceId){
 		HttpProvider httpProvider=HttpManager.getWulianCloudProvider();

@@ -42,6 +42,7 @@ public class EyecatManager {
             String code = object.optString("code");
             if("4000".equals(code)){
                 isLogined = true;
+                EyecatManager.getInstance().getICVSSUserInstance().equesGetDeviceList();
             }
         }
     };
@@ -86,9 +87,8 @@ public class EyecatManager {
     public void login(){
         if(!isLogined){
             EyecatManager.getInstance().addPacketListener(loginPacketListener);
-            EyecatManager.getInstance().getICVSSUserInstance().equesLogin(MainApplication.getApplication(), DISTRIBUTE_URL,username,APPKEY);
             EyecatManager.getInstance().addPacketListener(deviceListResultListener);
-            EyecatManager.getInstance().getICVSSUserInstance().equesGetDeviceList();
+            EyecatManager.getInstance().getICVSSUserInstance().equesLogin(MainApplication.getApplication(), DISTRIBUTE_URL,username,APPKEY);
         }
     }
     public ICVSSUserInstance getICVSSUserInstance(){

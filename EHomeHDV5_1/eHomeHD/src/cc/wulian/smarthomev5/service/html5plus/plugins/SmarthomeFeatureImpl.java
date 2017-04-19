@@ -2090,6 +2090,7 @@ public class SmarthomeFeatureImpl {
         String devIDString = array.getString(1);
         Intent intent = new Intent(pWebview.getContext(), EyecatVideoCallActivity.class);
         intent.putExtra("bid", devIDString);
+        intent.putExtra("hasVideo", true);
         Activity thisActivity = (Activity) pWebview.getContainer();
         thisActivity.startActivity(intent);
     }

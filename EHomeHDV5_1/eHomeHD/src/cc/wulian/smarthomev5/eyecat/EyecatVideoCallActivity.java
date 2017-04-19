@@ -7,7 +7,6 @@ import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -20,6 +19,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.eques.icvss.core.module.user.BuddyType;
 import com.eques.icvss.utils.ELog;
@@ -29,11 +29,11 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 
+import cc.wulian.ihome.wan.util.StringUtil;
 import cc.wulian.smarthomev5.R;
 import cc.wulian.smarthomev5.view.CircleImageView;
 
 public class EyecatVideoCallActivity extends Activity {
-	private final String TAG = "EyecatVideoCallActivity";
 	private SurfaceView surfaceView;
 	private String callId;
 	private int currVolume;
@@ -53,7 +53,7 @@ public class EyecatVideoCallActivity extends Activity {
 	
 	private int screenWidthDip;
 	private int screenHeightDip;
-	private String uid ;
+	private String bid;
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
@@ -64,19 +64,97 @@ public class EyecatVideoCallActivity extends Activity {
 		audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, current, 0);
 		
 		currVolume = current;
-		uid = getIntent().getStringExtra(Method.ATTR_BUDDY_UID);
-		Log.d("uid",uid);
 		hasVideo = getIntent().getBooleanExtra(Method.ATTR_CALL_HASVIDEO, false);
-
-
+		bid = getIntent().getStringExtra("bid");
 		initUI();
-		
-		boolean bo = audioManager.isWiredHeadsetOn();
-		if(!bo){
-			openSpeaker();
-		}
+		EyecatManager.getInstance().login();
+		new Thread(){
+			@Override
+			public void run() {
+				showVideo();
+			}
+		}.start();
 	}
 
+	void showVideo(){
+		int count = 0;
+		EyecatManager.EyecatDevice device = null;
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				Toast.makeText(EyecatVideoCallActivity.this,"正在尝试连接。。",Toast.LENGTH_SHORT).show();
+			}
+		});
+		while(count < 10) {
+			device = EyecatManager.getInstance().getDevice(bid);
+			if (device == null) {
+				try {
+					Thread.sleep(1000);
+				}catch (Exception e){
+					e.printStackTrace();
+				}
+				count++;
+			}else{
+				break;
+			}
+		}
+		if(device == null){
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					Toast.makeText(EyecatVideoCallActivity.this,"登入失败,请重新尝试",Toast.LENGTH_LONG).show();
+					finish();
+				}
+			});
+		}else if(StringUtil.isNullOrEmpty(device.getUid())){
+			runOnUiThread(new Runnable() {
+				  @Override
+				  public void run() {
+					  Toast.makeText(EyecatVideoCallActivity.this,"设备不在线，请检查设备",Toast.LENGTH_LONG).show();
+					  finish();
+				  }
+			});
+		}else{
+			final String uid = device.getUid();
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					Toast.makeText(EyecatVideoCallActivity.this,"开始打开回话:"+uid,Toast.LENGTH_SHORT).show();
+					surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
+
+						public void surfaceChanged(SurfaceHolder holder, int arg1,
+												   int arg2, int arg3) {
+						}
+
+						public void surfaceCreated(SurfaceHolder holder) {
+
+							if(hasVideo){ //是否显示视频
+								callId = EyecatManager.getInstance().getICVSSUserInstance().equesOpenCall(uid, holder.getSurface()); //视频 + 语音通话
+							}else{
+								callId = EyecatManager.getInstance().getICVSSUserInstance().equesOpenCall(uid, surfaceView, null); //语音通话
+							}
+						}
+
+						public void surfaceDestroyed(SurfaceHolder holder) {
+						}
+					});
+					boolean bo = audioManager.isWiredHeadsetOn();
+					if(!bo){
+						openSpeaker();
+					}
+					setVideoSize();
+
+					LayoutParams layoutParams;
+					if(devType == BuddyType.TYPE_CAMERA_C01){
+						layoutParams = new LayoutParams(screenWidthDip, (screenWidthDip / 5));
+					}else{
+						layoutParams = new LayoutParams(screenWidthDip, (screenWidthDip / 7));
+					}
+					linear_padding.setLayoutParams(layoutParams);
+				}
+			});
+		}
+	}
 	private void initUI() {
 		surfaceView = (SurfaceView) findViewById(R.id.surface_view);
 		
@@ -95,35 +173,7 @@ public class EyecatVideoCallActivity extends Activity {
 		linear_padding = (LinearLayout) findViewById(R.id.linear_padding);
 		RelativeLayout relative_videocall = (RelativeLayout) findViewById(R.id.relative_videocall);
 		relative_videocall.setOnClickListener(new MyOnClickListener());
-		
-		surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
-			
-			public void surfaceChanged(SurfaceHolder holder, int arg1,
-                                       int arg2, int arg3) {
-			}
-			
-			public void surfaceCreated(SurfaceHolder holder) {
-				
-				if(hasVideo){ //是否显示视频
-				    callId = EyecatManager.getInstance().getICVSSUserInstance().equesOpenCall(uid, holder.getSurface()); //视频 + 语音通话
-				}else{
-				    callId = EyecatManager.getInstance().getICVSSUserInstance().equesOpenCall(uid, surfaceView, null); //语音通话
-				}
-			}
-			
-			public void surfaceDestroyed(SurfaceHolder holder) {
-			}
-		});
-		
-		setVideoSize();
-		
-		LayoutParams layoutParams;
-		if(devType == BuddyType.TYPE_CAMERA_C01){
-			layoutParams = new LayoutParams(screenWidthDip, (screenWidthDip / 5));
-		}else{
-			layoutParams = new LayoutParams(screenWidthDip, (screenWidthDip / 7));
-		}
-		linear_padding.setLayoutParams(layoutParams);
+
 	}
 	
 	private void callSpeakerSetting(boolean f) {
