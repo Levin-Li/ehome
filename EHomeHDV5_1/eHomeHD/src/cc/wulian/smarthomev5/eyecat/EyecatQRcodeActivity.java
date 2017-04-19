@@ -12,6 +12,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.eques.icvss.core.module.user.BuddyType;
 import com.eques.icvss.utils.Method;
@@ -80,12 +81,14 @@ public class EyecatQRcodeActivity extends Activity implements View.OnClickListen
     @Override
     protected void onResume() {
         super.onResume();
+        EyecatManager.getInstance().addPacketListener(scanReqListener);
         EyecatManager.getInstance().addPacketListener(scanResultListener);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        EyecatManager.getInstance().addPacketListener(scanReqListener);
         EyecatManager.getInstance().removePacketListener(scanResultListener);
     }
 
@@ -116,7 +119,7 @@ public class EyecatQRcodeActivity extends Activity implements View.OnClickListen
         }
         return null;
     }
-    private EyecatManager.PacketListener scanResultListener = new EyecatManager.PacketListener() {
+    private EyecatManager.PacketListener scanReqListener = new EyecatManager.PacketListener() {
         @Override
         public String getMenthod() {
             return Method.METHOD_ONADDBDY_REQ;
@@ -133,5 +136,31 @@ public class EyecatQRcodeActivity extends Activity implements View.OnClickListen
             });
         }
     };
+    private EyecatManager.PacketListener scanResultListener = new EyecatManager.PacketListener() {
+        @Override
+        public String getMenthod() {
+            return Method.METHOD_ONADDBDY_RESULT;
+        }
 
+        @Override
+        public void processPacket(JSONObject object) {
+            String code = object.optString(Method.ATTR_EQUES_SDK_CODE);
+            if("4407".equals(code)){
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(EyecatQRcodeActivity.this,"设备已经绑定，无需再绑定",Toast.LENGTH_LONG).show();
+                    }
+                });
+            }else if("4402".equals(code)){
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(EyecatQRcodeActivity.this,"请求超时，请重新扫描",Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+
+        }
+    };
 }

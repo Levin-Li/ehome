@@ -338,7 +338,7 @@
 			aDel.appendChild(setImg);
 			if("CMMY02"==deviceModel){
 				aDel.onclick = function() { //点击按钮解除设备绑定
-					plus.ehomev5.goToSetEyeCamera(device.deviceId, device.isAdmin, function(result) {
+					plus.ehomev5.goToSetEyeCatYiKang(device.deviceId, device.isAdmin, function(result) {
 						if(result == '0') {
 							window.location = "gatewayList.html";
 						} else if(result == '-1') {

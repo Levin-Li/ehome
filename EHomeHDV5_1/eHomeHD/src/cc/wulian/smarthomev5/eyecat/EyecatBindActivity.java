@@ -67,12 +67,11 @@ public class EyecatBindActivity extends Activity implements View.OnClickListener
                 finish();
                 break;
             case R.id.eyecat_next:
-                Intent intent = null;
                 if(flag){
-                    JsUtil.getInstance().execCallback(SmarthomeFeatureImpl.mWebview, SmarthomeFeatureImpl.mCallBackId,"1", JsUtil.OK, true);
+                    JsUtil.getInstance().execCallback(SmarthomeFeatureImpl.pWebview, SmarthomeFeatureImpl.callbackid,"0", JsUtil.OK, false);
                     finish();
                 }else{
-                    intent = new Intent(EyecatBindActivity.this,EyecatQRcodeActivity.class);
+                    Intent intent = new Intent(EyecatBindActivity.this,EyecatQRcodeActivity.class);
                     startActivity(intent);
                     finish();
                 }

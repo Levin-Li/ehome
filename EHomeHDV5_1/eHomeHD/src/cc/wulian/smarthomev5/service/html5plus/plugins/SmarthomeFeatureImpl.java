@@ -81,6 +81,7 @@ import cc.wulian.smarthomev5.entity.haixin.CloudRequest;
 import cc.wulian.smarthomev5.entity.haixin.DeviceWifiSet;
 import cc.wulian.smarthomev5.entity.uei.UEIEntity;
 import cc.wulian.smarthomev5.entity.uei.UEIEntityManager;
+import cc.wulian.smarthomev5.eyecat.EyecatSettingActivity;
 import cc.wulian.smarthomev5.eyecat.EyecatVideoCallActivity;
 import cc.wulian.smarthomev5.eyecat.EyecatWIFISettingOneActivity;
 import cc.wulian.smarthomev5.fragment.device.AreaGroupManager;
@@ -2101,12 +2102,8 @@ public class SmarthomeFeatureImpl {
         String devIDString = array.getString(1);
         this.callbackid = callBackId;
         this.pWebview = pWebview;
-        Intent intent = new Intent(pWebview.getContext(), SetEagleCameraActivity.class);
-        SetEagleCameraActivity.setUpdateCameraName(new UpdateCameraInfo());//为了修改猫眼设备名
-        intent.putExtra(Config.eagleSettingEnter, SetEagleCameraActivity.WITHOUT_CAMERA_SETTING);
-        intent.putExtra(Config.tutkUid, devIDString);
-        intent.putExtra(Config.tutkPwd,"admin");
-        intent.putExtra(Config.isAdmin,Preference.getPreferences().getGatewayIsAdmin());
+        Intent intent = new Intent(pWebview.getContext(), EyecatSettingActivity.class);
+        intent.putExtra("bid", devIDString);
         Activity thisActivity = (Activity) pWebview.getContainer();
         thisActivity.startActivity(intent);
     }
