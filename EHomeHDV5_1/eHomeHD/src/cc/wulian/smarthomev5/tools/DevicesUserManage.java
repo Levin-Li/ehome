@@ -179,7 +179,6 @@ public class DevicesUserManage {
 			public void run() {
 				try {
 					delRes = um.getStub().unbindDevice(deviceId).status;
-					deleteDevice(deviceId);
 				} catch (Exception e) {
 					return;
 				}
