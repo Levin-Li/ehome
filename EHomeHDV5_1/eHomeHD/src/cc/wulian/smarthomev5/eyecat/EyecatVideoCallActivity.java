@@ -129,6 +129,8 @@ public class EyecatVideoCallActivity extends Activity {
 	private void callSpeakerSetting(boolean f) {
 		if (f) {
 			btnSoundSwitch.setText("松开结束");
+			btnSoundSwitch.setBackgroundResource(R.color.action_bar_bg);
+			btnSoundSwitch.setTextColor(getResources().getColor(R.color.text_gray));
 			if (callId != null) {
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioRecordEnable(true, callId);
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioPlayEnable(false, callId);
@@ -136,7 +138,8 @@ public class EyecatVideoCallActivity extends Activity {
 			closeSpeaker();
 		} else {
 			btnSoundSwitch.setText("按住说话");
-
+			btnSoundSwitch.setBackgroundResource(R.color.text_gray);
+			btnSoundSwitch.setTextColor(getResources().getColor(R.color.action_bar_bg));
 			if (callId != null) {
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioPlayEnable(true, callId);
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioRecordEnable(false, callId);
