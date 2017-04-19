@@ -60,15 +60,20 @@ public class EyecatManager {
 
         @Override
         public void onMeaasgeResponse(JSONObject jsonObject) {
-            Log.i("eyecat:",jsonObject.toString());
-            String method = jsonObject.optString("method");
-            if(listeners.containsKey(method)){
-                List<PacketListener> ls = listeners.get(method);
-                if(ls != null){
-                    for(PacketListener l :ls){
-                        l.processPacket(jsonObject);
+            try {
+                Log.i("eyecat:", jsonObject.toString());
+                String method = jsonObject.optString("method");
+                if (listeners.containsKey(method)) {
+                    List<PacketListener> ls = listeners.get(method);
+                    if (ls != null) {
+                        for (PacketListener l : ls) {
+                            l.processPacket(jsonObject);
+                        }
                     }
                 }
+            }catch (Exception e){
+                e.printStackTrace();
+                Log.e("eyecat:","error message");
             }
         }
     };

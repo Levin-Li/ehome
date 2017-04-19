@@ -6,7 +6,10 @@ import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -26,6 +29,7 @@ import com.eques.icvss.utils.ELog;
 import com.eques.icvss.utils.Method;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONObject;
 
 import java.io.File;
 
@@ -41,11 +45,14 @@ public class EyecatVideoCallActivity extends Activity {
 	private int current;
 	private boolean isMuteFlag;
 	private boolean hasVideo;
-	
+	private String uid;
+	private boolean isPlaying = false;
+	private boolean isExit = false;
 	private AudioManager audioManager;
 	private LinearLayout linear_padding;
 	private CircleImageView btnCapture, btnMute, btnHangupCall;
-	
+	private Handler handler = new Handler(Looper.getMainLooper());
+
 	private Button  btnSoundSwitch;
 	
 	int width = 640;
@@ -68,6 +75,16 @@ public class EyecatVideoCallActivity extends Activity {
 		bid = getIntent().getStringExtra("bid");
 		initUI();
 		EyecatManager.getInstance().login();
+		EyecatManager.getInstance().addPacketListener(videoCallListener);
+		EyecatManager.getInstance().addPacketListener(videoPlayingListener);
+	}
+	public void onBackPressed() {
+		hangUpCall();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
 		new Thread(){
 			@Override
 			public void run() {
@@ -76,6 +93,40 @@ public class EyecatVideoCallActivity extends Activity {
 		}.start();
 	}
 
+	@Override
+	protected void onPause() {
+		super.onPause();
+		isExit = true;
+		EyecatManager.getInstance().removePacketListener(videoCallListener);
+		EyecatManager.getInstance().removePacketListener(videoPlayingListener);
+		handler.removeCallbacks(runnable);
+	}
+	protected void onDestroy() {
+		super.onDestroy();
+		audioManager.setStreamMute(AudioManager.STREAM_MUSIC, false);
+		audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, current, 0);
+		closeSpeaker();
+	}
+	private void initUI() {
+		surfaceView = (SurfaceView) findViewById(R.id.surface_view);
+
+		btnCapture = (CircleImageView) findViewById(R.id.btn_capture);
+		btnCapture.setOnClickListener(new MyOnClickListener());
+
+		btnMute = (CircleImageView) findViewById(R.id.btn_mute);
+		btnMute.setOnClickListener(new MyOnClickListener());
+
+		btnHangupCall = (CircleImageView) findViewById(R.id.btn_hangupCall);
+		btnHangupCall.setOnClickListener(new MyOnClickListener());
+
+		btnSoundSwitch = (Button) findViewById(R.id.btn_soundSwitch);
+		btnSoundSwitch.setOnTouchListener(new MyOnTouchListener());
+
+		linear_padding = (LinearLayout) findViewById(R.id.linear_padding);
+		RelativeLayout relative_videocall = (RelativeLayout) findViewById(R.id.relative_videocall);
+		relative_videocall.setOnClickListener(new MyOnClickListener());
+
+	}
 	void showVideo(){
 		int count = 0;
 		EyecatManager.EyecatDevice device = null;
@@ -115,29 +166,11 @@ public class EyecatVideoCallActivity extends Activity {
 				  }
 			});
 		}else{
-			final String uid = device.getUid();
+			uid = device.getUid();
 			runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					Toast.makeText(EyecatVideoCallActivity.this,"开始打开回话:"+uid,Toast.LENGTH_SHORT).show();
-					surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
-
-						public void surfaceChanged(SurfaceHolder holder, int arg1,
-												   int arg2, int arg3) {
-						}
-
-						public void surfaceCreated(SurfaceHolder holder) {
-
-							if(hasVideo){ //是否显示视频
-								callId = EyecatManager.getInstance().getICVSSUserInstance().equesOpenCall(uid, holder.getSurface()); //视频 + 语音通话
-							}else{
-								callId = EyecatManager.getInstance().getICVSSUserInstance().equesOpenCall(uid, surfaceView, null); //语音通话
-							}
-						}
-
-						public void surfaceDestroyed(SurfaceHolder holder) {
-						}
-					});
+					Toast.makeText(EyecatVideoCallActivity.this,"开始打开回话:"+uid+",hasVideo:"+hasVideo,Toast.LENGTH_SHORT).show();
 					boolean bo = audioManager.isWiredHeadsetOn();
 					if(!bo){
 						openSpeaker();
@@ -151,31 +184,33 @@ public class EyecatVideoCallActivity extends Activity {
 						layoutParams = new LayoutParams(screenWidthDip, (screenWidthDip / 7));
 					}
 					linear_padding.setLayoutParams(layoutParams);
+					startUpCall(uid);
+//					if(hasVideo){ //是否显示视频
+//						callId = EyecatManager.getInstance().getICVSSUserInstance().equesOpenCall(uid, surfaceView.getHolder().getSurface()); //视频 + 语音通话
+//					}else{
+//						callId = EyecatManager.getInstance().getICVSSUserInstance().equesOpenCall(uid, surfaceView, null); //语音通话
+//					}
+					surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
+
+						public void surfaceChanged(SurfaceHolder holder, int arg1,
+												   int arg2, int arg3) {
+						}
+
+						public void surfaceCreated(SurfaceHolder holder) {
+							Log.i("eyecat:","surfaceCreated");
+
+						}
+
+						public void surfaceDestroyed(SurfaceHolder holder) {
+							Log.i("eyecat:","surfaceDestroyed");
+						}
+					});
+
 				}
 			});
 		}
 	}
-	private void initUI() {
-		surfaceView = (SurfaceView) findViewById(R.id.surface_view);
-		
-		btnCapture = (CircleImageView) findViewById(R.id.btn_capture);
-		btnCapture.setOnClickListener(new MyOnClickListener());
-		
-		btnMute = (CircleImageView) findViewById(R.id.btn_mute);
-		btnMute.setOnClickListener(new MyOnClickListener());
-		
-		btnHangupCall = (CircleImageView) findViewById(R.id.btn_hangupCall);
-		btnHangupCall.setOnClickListener(new MyOnClickListener());
-		
-		btnSoundSwitch = (Button) findViewById(R.id.btn_soundSwitch);
-		btnSoundSwitch.setOnTouchListener(new MyOnTouchListener());
-		
-		linear_padding = (LinearLayout) findViewById(R.id.linear_padding);
-		RelativeLayout relative_videocall = (RelativeLayout) findViewById(R.id.relative_videocall);
-		relative_videocall.setOnClickListener(new MyOnClickListener());
 
-	}
-	
 	private void callSpeakerSetting(boolean f) {
 		if (f) {
 			btnSoundSwitch.setText("松开结束");
@@ -238,28 +273,59 @@ public class EyecatVideoCallActivity extends Activity {
 		}
 		return s;
 	}
-	
+	private Runnable runnable = new Runnable() {
+		@Override
+		public void run() {
+			if(!isPlaying) {
+				if (callId != null) {
+					EyecatManager.getInstance().getICVSSUserInstance().equesCloseCall(callId);
+				}
+			}
+		}
+	};
+	private EyecatManager.PacketListener videoCallListener= new EyecatManager.PacketListener() {
+		@Override
+		public String getMenthod() {
+			return Method.METHOD_CALL;
+		}
+		@Override
+		public void processPacket(JSONObject object) {
+			String state = object.optString("state");
+			String sid = object.optString("sid");
+			if("try".equals(state)){
+			}else if("ok".equals(state)) {
+				if (!isExit){
+					handler.postDelayed(runnable, 3000);
+			}
+			}else if("close".equals(state)){
+				if(!isExit) {
+					handler.removeCallbacks(runnable);
+				}
+				if(!isPlaying && !isExit){
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							startUpCall(uid);
+						}
+					});
+				}else{
+					isPlaying = false;
+				}
+			}
+		}
+	};
+	private EyecatManager.PacketListener videoPlayingListener= new EyecatManager.PacketListener() {
+		@Override
+		public String getMenthod() {
+			return Method.METHOD_VIDEOPLAY_STATUS_PLAYING;
+		}
 
-
-	
-	public void onBackPressed() {
-		hangUpCall();
-	}
-	
-	
-	protected void onPause() {
-		super.onPause();
-		hangUpCall();
-	}
-	
-	protected void onDestroy() {
-		super.onDestroy();
-		audioManager.setStreamMute(AudioManager.STREAM_MUSIC, false);
-		audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, current, 0);
-
-		closeSpeaker();
-	}
-
+		@Override
+		public void processPacket(JSONObject object) {
+			isPlaying = true;
+			handler.removeCallbacks(runnable);
+		}
+	};
 	private class MyOnTouchListener implements OnTouchListener {
 		
 		public boolean onTouch(View v, MotionEvent event) {
@@ -385,7 +451,14 @@ public class EyecatVideoCallActivity extends Activity {
 
 		}
 	}
-	
+	private void startUpCall(String uid){
+		isPlaying = false;
+		if(hasVideo){ //是否显示视频
+			callId = EyecatManager.getInstance().getICVSSUserInstance().equesOpenCall(uid, surfaceView.getHolder().getSurface()); //视频 + 语音通话
+		}else{
+			callId = EyecatManager.getInstance().getICVSSUserInstance().equesOpenCall(uid, surfaceView, null); //语音通话
+		}
+	}
 	private void hangUpCall(){
 		if (callId != null) {
 			EyecatManager.getInstance().getICVSSUserInstance().equesCloseCall(callId);
