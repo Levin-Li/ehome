@@ -19,6 +19,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
@@ -50,7 +51,7 @@ public class EyecatVideoCallActivity extends Activity {
 	private boolean isExit = false;
 	private AudioManager audioManager;
 	private LinearLayout linear_padding;
-	private CircleImageView btnCapture, btnMute, btnHangupCall;
+	private ImageButton btnCapture, btnMute, btnHangupCall;
 	private Handler handler = new Handler(Looper.getMainLooper());
 
 	private Button  btnSoundSwitch;
@@ -110,13 +111,13 @@ public class EyecatVideoCallActivity extends Activity {
 	private void initUI() {
 		surfaceView = (SurfaceView) findViewById(R.id.surface_view);
 
-		btnCapture = (CircleImageView) findViewById(R.id.btn_capture);
+		btnCapture = (ImageButton) findViewById(R.id.btn_capture);
 		btnCapture.setOnClickListener(new MyOnClickListener());
 
-		btnMute = (CircleImageView) findViewById(R.id.btn_mute);
+		btnMute = (ImageButton) findViewById(R.id.btn_mute);
 		btnMute.setOnClickListener(new MyOnClickListener());
 
-		btnHangupCall = (CircleImageView) findViewById(R.id.btn_hangupCall);
+		btnHangupCall = (ImageButton) findViewById(R.id.btn_hangupCall);
 		btnHangupCall.setOnClickListener(new MyOnClickListener());
 
 		btnSoundSwitch = (Button) findViewById(R.id.btn_soundSwitch);

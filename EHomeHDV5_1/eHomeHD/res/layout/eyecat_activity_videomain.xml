@@ -3,7 +3,7 @@
     android:id="@+id/relative_videocall"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="@color/white"
     android:orientation="vertical" >
 
     <FrameLayout
@@ -57,58 +57,54 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:id="@+id/linear_CaptureDefault"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingBottom="30dp"
-                android:paddingTop="10dp"
+                android:orientation="horizontal"
+
+                android:layout_marginBottom="30dp"
+                android:layout_marginTop="10dp"
                 android:visibility="visible" >
-                <Button
-                    android:id="@+id/btn_lock"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="开锁"
-                    android:textColor="@android:color/black"
-                    android:visibility="gone"
-                    android:textSize="16dp" />
-                <cc.wulian.smarthomev5.view.CircleImageView
+
+                <ImageButton
                     android:id="@+id/btn_mute"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="33dp"
+                    android:layout_height="62dp"
                     android:layout_weight="1"
-                    android:textColor="@android:color/black"
-                    android:gravity="center"
+                    android:layout_marginRight="33dp"
+                    android:layout_marginLeft="33dp"
+                    android:background="@drawable/bg_icon_big_circular_green"
                     android:src="@drawable/icon_mute_on"
+
                     />
-                <cc.wulian.smarthomev5.view.CircleImageView
+                <ImageButton
                     android:id="@+id/btn_capture"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="33dp"
+                    android:layout_height="62dp"
                     android:layout_weight="1"
-                    android:textColor="@android:color/black"
-                    android:gravity="center"
+                    android:layout_marginRight="33dp"
+                    android:layout_marginLeft="33dp"
+                    android:background="@drawable/bg_icon_big_circular_green"
                     android:src="@drawable/icon_cap"
                     />
-                <cc.wulian.smarthomev5.view.CircleImageView
+                <ImageButton
                     android:id="@+id/btn_hangupCall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="33dp"
+                    android:layout_height="62dp"
                     android:layout_weight="1"
-                    android:textColor="@android:color/black"
-                    android:gravity="center"
+                    android:layout_marginRight="33dp"
+                    android:layout_marginLeft="33dp"
+                    android:background="@drawable/bg_icon_big_circular_green"
                     android:src="@drawable/icon_hangup"
                     />
 
 
             </LinearLayout>
-        </RelativeLayout>
 
+        </RelativeLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
