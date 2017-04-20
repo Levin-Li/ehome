@@ -19,7 +19,9 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
@@ -52,10 +54,10 @@ public class EyecatVideoCallActivity extends Activity {
 	private boolean isExit = false;
 	private AudioManager audioManager;
 	private LinearLayout linear_padding;
-	private ImageButton btnCapture, btnMute, btnHangupCall;
+	private FrameLayout btnCapture, btnMute, btnHangupCall;
 	private Handler handler = new Handler(Looper.getMainLooper());
 
-	private Button  btnSoundSwitch;
+	private ImageView btnSoundSwitch,iv_mute;
 	
 	int width = 640;
 	int height = 480;
@@ -112,19 +114,20 @@ public class EyecatVideoCallActivity extends Activity {
 	private void initUI() {
 		surfaceView = (SurfaceView) findViewById(R.id.surface_view);
 
-		btnCapture = (ImageButton) findViewById(R.id.btn_capture);
+		btnCapture = (FrameLayout) findViewById(R.id.btn_capture);
 		btnCapture.setOnClickListener(new MyOnClickListener());
 
-		btnMute = (ImageButton) findViewById(R.id.btn_mute);
+		btnMute = (FrameLayout) findViewById(R.id.btn_mute);
 		btnMute.setOnClickListener(new MyOnClickListener());
 
-		btnHangupCall = (ImageButton) findViewById(R.id.btn_hangupCall);
+		btnHangupCall = (FrameLayout) findViewById(R.id.btn_hangupCall);
 		btnHangupCall.setOnClickListener(new MyOnClickListener());
 
-		btnSoundSwitch = (Button) findViewById(R.id.btn_soundSwitch);
+		btnSoundSwitch = (ImageView) findViewById(R.id.btn_soundSwitch);
 		btnSoundSwitch.setOnTouchListener(new MyOnTouchListener());
 
 		linear_padding = (LinearLayout) findViewById(R.id.linear_padding);
+		iv_mute = (ImageView) findViewById(R.id.iv_mute);
 		RelativeLayout relative_videocall = (RelativeLayout) findViewById(R.id.relative_videocall);
 		relative_videocall.setOnClickListener(new MyOnClickListener());
 
@@ -215,18 +218,18 @@ public class EyecatVideoCallActivity extends Activity {
 
 	private void callSpeakerSetting(boolean f) {
 		if (f) {
-			btnSoundSwitch.setText("松开结束");
+
 			btnSoundSwitch.setBackgroundResource(R.color.action_bar_bg);
-			btnSoundSwitch.setTextColor(getResources().getColor(R.color.text_gray));
+
 			if (callId != null) {
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioRecordEnable(true, callId);
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioPlayEnable(false, callId);
 			}
 			closeSpeaker();
 		} else {
-			btnSoundSwitch.setText("按住说话");
+
 			btnSoundSwitch.setBackgroundResource(R.color.text_gray);
-			btnSoundSwitch.setTextColor(getResources().getColor(R.color.action_bar_bg));
+
 			if (callId != null) {
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioPlayEnable(true, callId);
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioRecordEnable(false, callId);
@@ -444,13 +447,13 @@ public class EyecatVideoCallActivity extends Activity {
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioPlayEnable(false, callId);
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioRecordEnable(false, callId);
 			}
-			btnMute.setImageResource(R.drawable.icon_suspend);
+			iv_mute.setImageResource(R.drawable.icon_suspend);
 
 			
 		}else{
 			audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, current, 0);
 			callSpeakerSetting(false);
-			btnMute.setImageResource(R.drawable.icon_mute_on);
+			iv_mute.setImageResource(R.drawable.icon_mute_on);
 
 		}
 	}
