@@ -46,9 +46,6 @@ public class EyecatWIFISettingOneActivity extends Activity implements View.OnCli
                     finish();
                 }else{
                     Toast.makeText(this, "添加设备只支持在WiFi网络下进行", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(EyecatWIFISettingOneActivity.this,EyecatWIFISettingTwoActivity.class);
-                    startActivity(intent);
-                    finish();
                 }
                 break;
         }

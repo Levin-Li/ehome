@@ -68,8 +68,6 @@ public class EyecatQRcodeActivity extends Activity implements View.OnClickListen
         password = intent.getStringExtra("pwd");
         WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
         wifiSsid = getWifiInfoSSid(wifiManager);
-        password = "taotaotao";
-        wifiSsid = "Mi-4c";
         Bitmap bitmap = EyecatManager.getInstance().getICVSSUserInstance().equesCreateQrcode(wifiSsid, password, EyecatManager.KEYID, EyecatManager.username,
                 BuddyType.TYPE_WIFI_DOOR_R22, 230);
 
