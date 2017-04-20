@@ -19,10 +19,13 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eques.icvss.core.module.user.BuddyType;
@@ -52,11 +55,11 @@ public class EyecatVideoCallActivity extends Activity {
 	private boolean isExit = false;
 	private AudioManager audioManager;
 	private LinearLayout linear_padding;
-	private ImageButton btnCapture, btnMute, btnHangupCall;
+	private FrameLayout btnCapture, btnMute, btnHangupCall;
 	private Handler handler = new Handler(Looper.getMainLooper());
 
-	private Button  btnSoundSwitch;
-	
+	private ImageView btnSoundSwitch,iv_mute,levelone,leveltwo,levelthree,levelfour,levelfive;
+	private TextView battery_status_title;
 	int width = 640;
 	int height = 480;
 	
@@ -87,10 +90,12 @@ public class EyecatVideoCallActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+
 		new Thread(){
 			@Override
 			public void run() {
 				showVideo();
+				showBatteryStatus();
 			}
 		}.start();
 	}
@@ -112,21 +117,28 @@ public class EyecatVideoCallActivity extends Activity {
 	private void initUI() {
 		surfaceView = (SurfaceView) findViewById(R.id.surface_view);
 
-		btnCapture = (ImageButton) findViewById(R.id.btn_capture);
+		btnCapture = (FrameLayout) findViewById(R.id.btn_capture);
 		btnCapture.setOnClickListener(new MyOnClickListener());
 
-		btnMute = (ImageButton) findViewById(R.id.btn_mute);
+		btnMute = (FrameLayout) findViewById(R.id.btn_mute);
 		btnMute.setOnClickListener(new MyOnClickListener());
 
-		btnHangupCall = (ImageButton) findViewById(R.id.btn_hangupCall);
+		btnHangupCall = (FrameLayout) findViewById(R.id.btn_hangupCall);
 		btnHangupCall.setOnClickListener(new MyOnClickListener());
 
-		btnSoundSwitch = (Button) findViewById(R.id.btn_soundSwitch);
+		btnSoundSwitch = (ImageView) findViewById(R.id.btn_soundSwitch);
 		btnSoundSwitch.setOnTouchListener(new MyOnTouchListener());
 
 		linear_padding = (LinearLayout) findViewById(R.id.linear_padding);
+		iv_mute = (ImageView) findViewById(R.id.iv_mute);
 		RelativeLayout relative_videocall = (RelativeLayout) findViewById(R.id.relative_videocall);
 		relative_videocall.setOnClickListener(new MyOnClickListener());
+		battery_status_title = (TextView) findViewById(R.id.battery_status_title);
+		levelone = (ImageView) findViewById(R.id.level_one);
+		leveltwo = (ImageView) findViewById(R.id.level_two);
+		levelthree = (ImageView) findViewById(R.id.level_three);
+		levelfour = (ImageView) findViewById(R.id.level_four);
+		levelfive = (ImageView) findViewById(R.id.level_five);
 
 	}
 	void showVideo(){
@@ -212,21 +224,23 @@ public class EyecatVideoCallActivity extends Activity {
 			});
 		}
 	}
-
+	private void showBatteryStatus(){
+		EyecatManager.getInstance().addPacketListener(batteryStatusListener);
+	}
 	private void callSpeakerSetting(boolean f) {
 		if (f) {
-			btnSoundSwitch.setText("松开结束");
+
 			btnSoundSwitch.setBackgroundResource(R.color.action_bar_bg);
-			btnSoundSwitch.setTextColor(getResources().getColor(R.color.text_gray));
+
 			if (callId != null) {
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioRecordEnable(true, callId);
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioPlayEnable(false, callId);
 			}
 			closeSpeaker();
 		} else {
-			btnSoundSwitch.setText("按住说话");
+
 			btnSoundSwitch.setBackgroundResource(R.color.text_gray);
-			btnSoundSwitch.setTextColor(getResources().getColor(R.color.action_bar_bg));
+
 			if (callId != null) {
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioPlayEnable(true, callId);
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioRecordEnable(false, callId);
@@ -285,6 +299,7 @@ public class EyecatVideoCallActivity extends Activity {
 			}
 		}
 	};
+
 	private EyecatManager.PacketListener videoCallListener= new EyecatManager.PacketListener() {
 		@Override
 		public String getMenthod() {
@@ -326,6 +341,65 @@ public class EyecatVideoCallActivity extends Activity {
 		public void processPacket(JSONObject object) {
 			isPlaying = true;
 			handler.removeCallbacks(runnable);
+		}
+	};
+	private EyecatManager.PacketListener batteryStatusListener = new EyecatManager.PacketListener() {
+		@Override
+		public String getMenthod() {
+			return Method.METHOD_BATTERY_STATUS;
+		}
+
+		@Override
+		public void processPacket(JSONObject object) {
+			final int status = object.optInt(Method.ATTR_STATUS);
+			final int level = object.optInt(Method.ATTR_LEVEL);
+			runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						if(status == 2){
+							battery_status_title.setText("充电中");
+						}else {
+							battery_status_title.setText(level+"%");
+						}
+						if(level>=80){
+							levelone.setVisibility(View.VISIBLE);
+							leveltwo.setVisibility(View.VISIBLE);
+							levelthree.setVisibility(View.VISIBLE);
+							levelfour.setVisibility(View.VISIBLE);
+							levelfive.setVisibility(View.VISIBLE);
+							levelone.setImageResource(R.drawable.barry_green);
+						}else if(level<80&&level>=60){
+							levelone.setVisibility(View.VISIBLE);
+							leveltwo.setVisibility(View.VISIBLE);
+							levelthree.setVisibility(View.VISIBLE);
+							levelfour.setVisibility(View.VISIBLE);
+							levelfive.setVisibility(View.INVISIBLE);
+							levelone.setImageResource(R.drawable.barry_green);
+						}else if(level<60&&level>=40){
+							levelone.setVisibility(View.VISIBLE);
+							leveltwo.setVisibility(View.VISIBLE);
+							levelthree.setVisibility(View.VISIBLE);
+							levelfour.setVisibility(View.INVISIBLE);
+							levelfive.setVisibility(View.INVISIBLE);
+							levelone.setImageResource(R.drawable.barry_green);
+						}else if(level<40&&level>=20){
+							levelone.setVisibility(View.VISIBLE);
+							leveltwo.setVisibility(View.VISIBLE);
+							levelthree.setVisibility(View.INVISIBLE);
+							levelfour.setVisibility(View.INVISIBLE);
+							levelfive.setVisibility(View.INVISIBLE);
+							levelone.setImageResource(R.drawable.barry_green);
+						}else if(level<20){
+							levelone.setVisibility(View.VISIBLE);
+							leveltwo.setVisibility(View.INVISIBLE);
+							levelthree.setVisibility(View.INVISIBLE);
+							levelfour.setVisibility(View.INVISIBLE);
+							levelfive.setVisibility(View.INVISIBLE);
+							levelone.setImageResource(R.drawable.barry_red);
+						}
+					}
+				});
+
 		}
 	};
 	private class MyOnTouchListener implements OnTouchListener {
@@ -444,13 +518,13 @@ public class EyecatVideoCallActivity extends Activity {
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioPlayEnable(false, callId);
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioRecordEnable(false, callId);
 			}
-			btnMute.setImageResource(R.drawable.icon_suspend);
+			iv_mute.setImageResource(R.drawable.icon_suspend);
 
 			
 		}else{
 			audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, current, 0);
 			callSpeakerSetting(false);
-			btnMute.setImageResource(R.drawable.icon_mute_on);
+			iv_mute.setImageResource(R.drawable.icon_mute_on);
 
 		}
 	}

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    >
+    <cc.wulian.smarthomev5.view.CircleImageView
+        android:id="@+id/btn_mute"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_weight="0.04"
+        android:gravity="center"
+        android:src="@drawable/icon_mute_on"
+        android:background="#efefef"
+        />
+</LinearLayout>
