@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eques.icvss.core.module.user.BuddyType;
@@ -57,8 +58,8 @@ public class EyecatVideoCallActivity extends Activity {
 	private FrameLayout btnCapture, btnMute, btnHangupCall;
 	private Handler handler = new Handler(Looper.getMainLooper());
 
-	private ImageView btnSoundSwitch,iv_mute;
-	
+	private ImageView btnSoundSwitch,iv_mute,levelone,leveltwo,levelthree,levelfour,levelfive;
+	private TextView battery_status_title;
 	int width = 640;
 	int height = 480;
 	
@@ -89,6 +90,7 @@ public class EyecatVideoCallActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		EyecatManager.getInstance().addPacketListener(batteryStatusListener);
 		new Thread(){
 			@Override
 			public void run() {
@@ -130,6 +132,12 @@ public class EyecatVideoCallActivity extends Activity {
 		iv_mute = (ImageView) findViewById(R.id.iv_mute);
 		RelativeLayout relative_videocall = (RelativeLayout) findViewById(R.id.relative_videocall);
 		relative_videocall.setOnClickListener(new MyOnClickListener());
+		battery_status_title = (TextView) findViewById(R.id.battery_status_title);
+		levelone = (ImageView) findViewById(R.id.level_one);
+		leveltwo = (ImageView) findViewById(R.id.level_two);
+		levelthree = (ImageView) findViewById(R.id.level_three);
+		levelfour = (ImageView) findViewById(R.id.level_four);
+		levelfive = (ImageView) findViewById(R.id.level_five);
 
 	}
 	void showVideo(){
@@ -288,6 +296,7 @@ public class EyecatVideoCallActivity extends Activity {
 			}
 		}
 	};
+
 	private EyecatManager.PacketListener videoCallListener= new EyecatManager.PacketListener() {
 		@Override
 		public String getMenthod() {
@@ -329,6 +338,65 @@ public class EyecatVideoCallActivity extends Activity {
 		public void processPacket(JSONObject object) {
 			isPlaying = true;
 			handler.removeCallbacks(runnable);
+		}
+	};
+	private EyecatManager.PacketListener batteryStatusListener = new EyecatManager.PacketListener() {
+		@Override
+		public String getMenthod() {
+			return Method.METHOD_BATTERY_STATUS;
+		}
+
+		@Override
+		public void processPacket(JSONObject object) {
+			final int status = object.optInt(Method.ATTR_STATUS);
+			final int level = object.optInt(Method.ATTR_LEVEL);
+			runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						if(status == 2){
+							battery_status_title.setText("充电中");
+						}else {
+							battery_status_title.setText(level+"%");
+						}
+						if(level>=80){
+							levelone.setVisibility(View.VISIBLE);
+							leveltwo.setVisibility(View.VISIBLE);
+							levelthree.setVisibility(View.VISIBLE);
+							levelfour.setVisibility(View.VISIBLE);
+							levelfive.setVisibility(View.VISIBLE);
+							levelone.setImageResource(R.drawable.barry_green);
+						}else if(level<80&&level>=60){
+							levelone.setVisibility(View.VISIBLE);
+							leveltwo.setVisibility(View.VISIBLE);
+							levelthree.setVisibility(View.VISIBLE);
+							levelfour.setVisibility(View.VISIBLE);
+							levelfive.setVisibility(View.INVISIBLE);
+							levelone.setImageResource(R.drawable.barry_green);
+						}else if(level<60&&level>=40){
+							levelone.setVisibility(View.VISIBLE);
+							leveltwo.setVisibility(View.VISIBLE);
+							levelthree.setVisibility(View.VISIBLE);
+							levelfour.setVisibility(View.INVISIBLE);
+							levelfive.setVisibility(View.INVISIBLE);
+							levelone.setImageResource(R.drawable.barry_green);
+						}else if(level<40&&level>=20){
+							levelone.setVisibility(View.VISIBLE);
+							leveltwo.setVisibility(View.VISIBLE);
+							levelthree.setVisibility(View.INVISIBLE);
+							levelfour.setVisibility(View.INVISIBLE);
+							levelfive.setVisibility(View.INVISIBLE);
+							levelone.setImageResource(R.drawable.barry_green);
+						}else if(level<20){
+							levelone.setVisibility(View.VISIBLE);
+							leveltwo.setVisibility(View.INVISIBLE);
+							levelthree.setVisibility(View.INVISIBLE);
+							levelfour.setVisibility(View.INVISIBLE);
+							levelfive.setVisibility(View.INVISIBLE);
+							levelone.setImageResource(R.drawable.barry_red);
+						}
+					}
+				});
+
 		}
 	};
 	private class MyOnTouchListener implements OnTouchListener {
