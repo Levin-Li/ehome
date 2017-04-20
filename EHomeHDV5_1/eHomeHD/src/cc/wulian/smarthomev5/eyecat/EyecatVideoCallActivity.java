@@ -33,10 +33,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import cc.wulian.ihome.wan.util.StringUtil;
 import cc.wulian.smarthomev5.R;
-import cc.wulian.smarthomev5.view.CircleImageView;
 
 public class EyecatVideoCallActivity extends Activity {
 	private SurfaceView surfaceView;
@@ -353,12 +354,13 @@ public class EyecatVideoCallActivity extends Activity {
 				break;
 				
 			case R.id.btn_capture:
-				String path = getCamPath();
-				
+				String path =  Environment.getExternalStorageDirectory().getAbsolutePath()
+						+ "/DingDong/";
 				boolean isCreateOk = createDirectory(path);
 				if(isCreateOk){
-					path = StringUtils.join(path, "test", ".jpg");
-					
+					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					String currentTime = format.format(new Date());
+					path = StringUtils.join(path, currentTime,".jpg");
 					if(devType == BuddyType.TYPE_CAMERA_C01){
 						height = 360;
 					}
@@ -466,30 +468,7 @@ public class EyecatVideoCallActivity extends Activity {
 		}
 		finish();
 	}
-		
-	public boolean hasSDCard() {
-		String status = Environment.getExternalStorageState();
-		if (status.equals(Environment.MEDIA_MOUNTED)) {
-			return true;
-		}
-		return false;
-	}
-	
-	public String getRootFilePath() {
-		if (hasSDCard()) {
-			return Environment.getExternalStorageDirectory().getAbsolutePath()
-					+ "/";
-		} else {
-			return Environment.getDataDirectory().getAbsolutePath() + "/";
-		}
-	}
-	
-	public String getCamPath() {
-		String rootPath = getRootFilePath();
-		String camPicPath = rootPath + "DingDong" + File.separator;
-		return camPicPath;
-	}
-	
+
 	public boolean createDirectory(String filePath) {
 		if (null == filePath) {
 			return false;
