@@ -93,6 +93,8 @@ public class EyecatManager {
         if(!isLogined){
             EyecatManager.getInstance().addPacketListener(loginPacketListener);
             EyecatManager.getInstance().addPacketListener(deviceListResultListener);
+            EyecatManager.getInstance().addPacketListener(devstResultListener);
+            EyecatManager.getInstance().addPacketListener(removedResultListener);
             EyecatManager.getInstance().getICVSSUserInstance().equesLogin(MainApplication.getApplication(), DISTRIBUTE_URL,username,APPKEY);
         }
     }
@@ -119,7 +121,7 @@ public class EyecatManager {
         devicesMap.put(device.getBid(),device);
     }
     public void removeDevice(EyecatDevice device){
-        devicesMap.remove(device);
+        devicesMap.remove(device.getBid());
     }
     public EyecatDevice getDevice(String bid){
         return devicesMap.get(bid);
@@ -193,6 +195,35 @@ public class EyecatManager {
                 EyecatManager.getInstance().putDevice(device);
             }
            Log.i("eyecat:","get list devices success");
+        }
+    };
+    private EyecatManager.PacketListener devstResultListener = new EyecatManager.PacketListener() {
+        @Override
+        public String getMenthod() {
+            return Method.METHOD_DEVST;
+        }
+
+        @Override
+        public void processPacket(JSONObject object) {
+            EyecatManager.EyecatDevice device = new EyecatManager.EyecatDevice();
+            device.setBid(object.optString(Method.ATTR_BUDDY_BID));
+            device.setUid(object.optString(Method.ATTR_BUDDY_UID));
+            device.setStatus(object.optInt(Method.ATTR_BUDDY_STATUS));
+            EyecatManager.getInstance().putDevice(device);
+        }
+    };
+    private EyecatManager.PacketListener removedResultListener = new EyecatManager.PacketListener() {
+        @Override
+        public String getMenthod() {
+            return Method.METHOD_ONBDY_REMOVED;
+        }
+
+        @Override
+        public void processPacket(JSONObject object) {
+            String bid = object.optString(Method.ATTR_BUDDY_BID);
+            EyecatManager.EyecatDevice device = new EyecatManager.EyecatDevice();
+            device.setBid(bid);
+            EyecatManager.getInstance().removeDevice(device);
         }
     };
 }

@@ -1,19 +1,28 @@
 package cc.wulian.smarthomev5.eyecat;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
-import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
+
+import com.alibaba.fastjson.JSON;
+import com.eques.icvss.utils.Method;
+import com.yuantuo.customview.ui.WLDialog;
+
+import org.json.JSONObject;
 
 import cc.wulian.h5plus.common.JsUtil;
+import cc.wulian.ihome.wan.sdk.user.entity.AMSDeviceInfo;
+import cc.wulian.ihome.wan.util.StringUtil;
+import cc.wulian.ihome.wan.util.TaskExecutor;
 import cc.wulian.smarthomev5.R;
+import cc.wulian.smarthomev5.account.WLUserManager;
 import cc.wulian.smarthomev5.service.html5plus.plugins.SmarthomeFeatureImpl;
 import cc.wulian.smarthomev5.tools.DevicesUserManage;
 
@@ -22,15 +31,15 @@ import cc.wulian.smarthomev5.tools.DevicesUserManage;
  * Created by Administrator on 2017/3/30.
  */
 
-public class EyecatSettingActivity extends Activity implements View.OnClickListener,CompoundButton.OnCheckedChangeListener {
-    private RelativeLayout eyecat_setup_info,eyecat_wifi_setting,eyecat_setup_name,eyecat_bind_lock;
-    private Intent intent;
-    private Switch doorbelllight,human_detection_onoff,do_not_disturb_onoff;
+public class EyecatSettingActivity extends Activity {
+    private RelativeLayout eyecat_setup_name,eyecat_wifi_setting,eyecatCallHistory,eyecatWarnHistory,eyecatPicture;
+    private ToggleButton doorbelllight,human_detection_onoff;
     private TextView setup_name;
-    public static Boolean settingflag = false;
-    private String nickname = "移康猫眼";
-    private TextView deleteEyeDeviceTextView;
+    private boolean humanChecked = false;
+    private boolean doorLightChecked = false;
+    private TextView eyecatBack,restartDeviceTextView,deleteEyeDeviceTextView;
     private String bid;
+    private String uid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,22 +52,121 @@ public class EyecatSettingActivity extends Activity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
+        EyecatManager.getInstance().addPacketListener(deviceDetailListener);
+        EyecatManager.getInstance().addPacketListener(hummanListener);
+        EyecatManager.getInstance().addPacketListener(doorbellLightListener);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        EyecatManager.getInstance().removePacketListener(deviceDetailListener);
+        EyecatManager.getInstance().removePacketListener(hummanListener);
+        EyecatManager.getInstance().removePacketListener(doorbellLightListener);
     }
 
     private void initView(){
+        eyecatBack = (TextView) findViewById(R.id.eyecat_return);
+        eyecatBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                JsUtil.getInstance().execCallback(SmarthomeFeatureImpl.pWebview, SmarthomeFeatureImpl.callbackid,"0", JsUtil.OK, false);
+                finish();
+            }
+        });
         setup_name = (TextView) findViewById(R.id.setup_name);
-        eyecat_setup_info = (RelativeLayout) findViewById(R.id.eyecat_setup_info);
-        eyecat_setup_info.setOnClickListener(this);
-        doorbelllight = (Switch) findViewById(R.id.doorbelllight_onoff);
-        doorbelllight.setOnCheckedChangeListener(this);
-        human_detection_onoff = (Switch) findViewById(R.id.human_detection_onoff);
-        human_detection_onoff.setOnCheckedChangeListener(this);
-        do_not_disturb_onoff = (Switch) findViewById(R.id.do_not_disturb_onoff);
-        do_not_disturb_onoff.setOnCheckedChangeListener(this);
-        eyecat_wifi_setting = (RelativeLayout) findViewById(R.id.eyecat_wifi_setting);
-        eyecat_wifi_setting.setOnClickListener(this);
         eyecat_setup_name = (RelativeLayout) findViewById(R.id.eyecat_setup_name);
-        eyecat_setup_name.setOnClickListener(this);
+        eyecat_setup_name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final EditText editText= new EditText(EyecatSettingActivity.this);
+                editText.setHint("设备名称");
+                WLDialog.Builder builder = new WLDialog.Builder(EyecatSettingActivity.this);
+                builder.setTitle("修改设备名");
+                builder.setContentView(editText);
+                builder.setPositiveButton(android.R.string.ok);
+                builder.setNegativeButton(android.R.string.cancel);
+                builder.setListener(new WLDialog.MessageListener() {
+                    @Override
+                    public void onClickPositive(View contentViewLayout) {
+                        EyecatManager.getInstance().getICVSSUserInstance().equesSetDeviceNick(uid,editText.getText().toString());
+                        TaskExecutor.getInstance().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                WLUserManager.getInstance().getStub().deviceUpdate(bid,null,editText.getText().toString());
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onClickNegative(View contentViewLayout) {
+                    }
+                });
+                builder.create().show();
+            }
+        });
+        doorbelllight = (ToggleButton) findViewById(R.id.doorbelllight_onoff);
+        doorbelllight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean isChecked = doorbelllight.isChecked();
+                doorLightChecked = isChecked;
+                if(isChecked){
+                    EyecatManager.getInstance().getICVSSUserInstance().equesSetDoorbellLight(uid,1);
+                }else {
+                    EyecatManager.getInstance().getICVSSUserInstance().equesSetDoorbellLight(uid,0);
+                }
+            }
+        });
+        human_detection_onoff = (ToggleButton) findViewById(R.id.human_detection_onoff);
+        human_detection_onoff.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean isChecked = human_detection_onoff.isChecked();
+                humanChecked = isChecked;
+                if(isChecked){
+                    EyecatManager.getInstance().getICVSSUserInstance().equesSetPirEnable(uid,1);
+                }else {
+                    EyecatManager.getInstance().getICVSSUserInstance().equesSetPirEnable(uid,0);
+                }
+            }
+        });
+        eyecat_wifi_setting = (RelativeLayout) findViewById(R.id.eyecat_wifi_setting);
+        eyecat_wifi_setting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(EyecatSettingActivity.this,EyecatWIFISettingOneActivity.class);
+                startActivity(intent);
+            }
+        });
+        eyecatCallHistory = (RelativeLayout) findViewById(R.id.history_call_relatvie);
+        eyecatCallHistory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        eyecatWarnHistory = (RelativeLayout) findViewById(R.id.history_warn_relative);
+        eyecatWarnHistory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        eyecatPicture = (RelativeLayout) findViewById(R.id.eyecat_image_info);
+        eyecatPicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        restartDeviceTextView = (TextView) findViewById(R.id.restart_tv);
+        restartDeviceTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EyecatManager.getInstance().getICVSSUserInstance().equesRestartDevice(uid);
+            }
+        });
         deleteEyeDeviceTextView = (TextView) findViewById(R.id.eyecat_delete_device);
         deleteEyeDeviceTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,112 +179,147 @@ public class EyecatSettingActivity extends Activity implements View.OnClickListe
         });
     }
     private void initData(){
-//        EyecatManager.getInstance().getICVSSUserInstance().equesGetDeviceList();
         EyecatManager.getInstance().login();
-        setup_name.setText(nickname);
+        TaskExecutor.getInstance().execute(new Runnable() {
+            @Override
+            public void run() {
+                syncUid();
+            }
+        });
     }
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.eyecat_setup_name:
-                final EditText editText= new EditText(EyecatSettingActivity.this);
-                editText.setHint("设备名称");
-                AlertDialog.Builder builder = new AlertDialog.Builder(EyecatSettingActivity.this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
-                builder.setView(editText);
-                builder.setTitle("修改设备名称");
-                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        EyecatManager.getInstance().getICVSSUserInstance().equesSetDeviceNick(Cookies.session.getBid(),editText.getText().toString());
-                        dialog.dismiss();
+    void syncUid() {
+        int count = 0;
+        EyecatManager.EyecatDevice device = null;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(EyecatSettingActivity.this, "正在尝试连接。。", Toast.LENGTH_SHORT).show();
+            }
+        });
+        while (count < 10) {
+            device = EyecatManager.getInstance().getDevice(bid);
+            if (device == null) {
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                count++;
+            } else {
+                break;
+            }
+        }
+        if (device == null) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(EyecatSettingActivity.this, "登入失败,请重新尝试", Toast.LENGTH_LONG).show();
+                    finish();
+                }
+            });
+        } else if (StringUtil.isNullOrEmpty(device.getUid())) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(EyecatSettingActivity.this, "设备不在线，请检查设备", Toast.LENGTH_LONG).show();
+                    finish();
+                }
+            });
+        } else {
+            uid = device.getUid();
+            final AMSDeviceInfo deviceInfo = WLUserManager.getInstance().getStub().getDeviceInfo(bid);
+            Log.i("eyecat:", JSON.toJSONString(deviceInfo));
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if(deviceInfo != null){
+                        String deviceName = "";
+                        if(StringUtil.isNullOrEmpty(deviceInfo.getDeviceName())){
+                            deviceName = deviceInfo.getDeviceId();
+                        }else{
+                            deviceName = deviceInfo.getDeviceName();
+                        }
+                        setup_name.setText(deviceName);
                     }
-                });
-                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    EyecatManager.getInstance().getICVSSUserInstance().equesGetDeviceInfo(uid);
+                }
+            });
 
-
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        dialog.dismiss();
-                    }
-                });
-
-                builder.create().show();
-                break;
-            case R.id.eyecat_setup_info:
-//                intent = new Intent(EyecatSettingActivity.this,EyecatSetupInfoActivity.class);
-//                startActivity(intent);
-                break;
-            case R.id.eyecat_wifi_setting:
-                intent = new Intent(EyecatSettingActivity.this,EyecatWIFISettingOneActivity.class);
-                startActivity(intent);
-                break;
         }
     }
+    private EyecatManager.PacketListener deviceDetailListener = new EyecatManager.PacketListener() {
+        @Override
+        public String getMenthod() {
+            return Method.METHOD_DEVICEINFO_RESULT;
+        }
 
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        switch (buttonView.getId()){
-            case R.id.doorbelllight_onoff:
-                settingflag = isChecked;
-                if(isChecked){
-                    EyecatManager.getInstance().getICVSSUserInstance().equesSetDoorbellLight(Cookies.session.getUid(),1);
-                }else {
-                    EyecatManager.getInstance().getICVSSUserInstance().equesSetDoorbellLight(Cookies.session.getUid(),0);
+        @Override
+        public void processPacket(final JSONObject object) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    int alarmEnable = object.optInt(Method.METHOD_ALARM_ENABLE);
+                    if(alarmEnable==1){
+                        human_detection_onoff.setChecked(true);
+                    }else{
+                        human_detection_onoff.setChecked(false);
+                    }
+                    int doorbellLightEnable = object.optInt(Method.METHOD_DB_LIGHT_ENABLE);
+                    if(doorbellLightEnable==1){
+                        doorbelllight.setChecked(true);
+                    }else{
+                        doorbelllight.setChecked(false);
+                    }
                 }
-                break;
-            case R.id.human_detection_onoff:
-                settingflag = isChecked;
-                if(isChecked){
-                    EyecatManager.getInstance().getICVSSUserInstance().equesSetPirEnable(Cookies.session.getUid(),1);
-                }else {
-                    EyecatManager.getInstance().getICVSSUserInstance().equesSetPirEnable(Cookies.session.getUid(),0);
-                }
-                break;
-            case R.id.do_not_disturb_onoff:
-                if(isChecked){
-
-                }else {
-
-                }
-                break;
+            });
 
         }
-    }
+    };
+    private EyecatManager.PacketListener hummanListener = new EyecatManager.PacketListener() {
+        @Override
+        public String getMenthod() {
+            return Method.METHOD_ALARM_ENABLE_RESULT;
+        }
 
-//    protected void handler(Message msg) {
-//        switch (msg.what) {
-//            case HANDLER_WAHT_MSGRESP:
-//                JSONObject json = (JSONObject) msg.obj;
-//                String jsonMsg = json.toString();
-//                String method = json.optString(Method.METHOD);
-//                ELog.v("EyecatSettingActivity",jsonMsg);
-//                if(method.equals(Method.METHOD_BDYLIST)){
-//                    JSONArray bdylist = json.optJSONArray("bdylist");
-//                    JSONObject bdy = bdylist.optJSONObject(0);
-//                    nickname = bdy.optString("nick");
-//                }else if(method.equals(Method.METHOD_ALARM_ENABLE_RESULT)){
-//                    int result = json.optInt("result");
-//                    if(result==1){
-//                        if(settingflag){
-//                            Toast.makeText(this, "人体侦测开关打开成功", Toast.LENGTH_SHORT).show();
-//                        }else{
-//                            Toast.makeText(this, "人体侦测开关关闭成功", Toast.LENGTH_SHORT).show();
-//                        }
-//                    }else{
-//                        Toast.makeText(this, "人体侦测开关设置失败", Toast.LENGTH_SHORT).show();
-//                    }
-//                }else if(method.equals(Method.METHOD_DB_LIGHT_ENABLE_RESULT)){
-//                    int result = json.optInt("result");
-//                    if(result==1){
-//                        if(settingflag){
-//                            Toast.makeText(this, "门铃灯开关打开成功", Toast.LENGTH_SHORT).show();
-//                        }else{
-//                            Toast.makeText(this, "门铃灯开关关闭成功", Toast.LENGTH_SHORT).show();
-//                        }
-//                    }else{
-//                        Toast.makeText(this, "门铃灯开关设置失败", Toast.LENGTH_SHORT).show();
-//                    }
-//                }
-//                break;
-//        }
-//    }
+        @Override
+        public void processPacket(final JSONObject object) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    int result = object.optInt("result");
+                    if(result==1){
+                        if(humanChecked){
+                            human_detection_onoff.setChecked(true);
+                        }else{
+                            human_detection_onoff.setChecked(false);
+                        }
+                    }
+                }
+            });
 
+        }
+    };
+    private EyecatManager.PacketListener doorbellLightListener = new EyecatManager.PacketListener() {
+        @Override
+        public String getMenthod() {
+            return Method.METHOD_DB_LIGHT_ENABLE_RESULT;
+        }
 
+        @Override
+        public void processPacket(final JSONObject object) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    int result = object.optInt("result");
+                    if(result==1){
+                        if(doorLightChecked){
+                            doorbelllight.setChecked(true);
+                        }else{
+                            doorbelllight.setChecked(false);
+                        }
+                    }
+                }
+            });
+        }
+    };
 }

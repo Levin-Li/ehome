@@ -5,7 +5,33 @@
     android:orientation="vertical"
     android:background="@drawable/main_background_v5"
     >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="@color/action_bar_bg">
 
+        <TextView
+            android:id="@+id/eyecat_title_main"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="设置"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/eyecat_return"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="17dp"
+            android:text="返回"
+            android:drawableLeft="@drawable/icon_back"
+            android:textColor="@color/white"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="17dp" />
+    </RelativeLayout>
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -14,34 +40,6 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             >
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="44dp"
-                android:background="@color/green">
-
-                <TextView
-                    android:id="@+id/eyecat_title_main"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:text="设置"
-                    android:textColor="@color/white"
-                    android:textSize="20sp" />
-
-                <Button
-                    android:id="@+id/eyecat_return"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="17dp"
-                    android:background="@color/green"
-                    android:text="返回"
-                    android:drawableLeft="@drawable/icon_back"
-                    android:textColor="@color/white"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_marginStart="17dp" />
-            </RelativeLayout>
             <RelativeLayout
                 android:id="@+id/eyecat_setup_name"
                 android:layout_width="match_parent"
@@ -77,40 +75,40 @@
                     android:text="移康猫眼"
                     />
             </RelativeLayout>
-            <RelativeLayout
-                android:id="@+id/eyecat_setup_info"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:background="@color/white"
-                >
+            <!--  <RelativeLayout
+                 android:id="@+id/eyecat_setup_info"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:layout_marginTop="2dp"
+                 android:background="@color/white"
+                 >
                 <TextView
-                    android:id="@+id/icon2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:layout_margin="16dp"
-                    android:drawableRight="@drawable/idea"
-                    android:textColor="@color/black"
-                    android:textSize="14sp" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/icon2"
-                    android:text="设备信息"
-                    android:layout_centerVertical="true"
-                    android:textColor="@color/black"
-                    />
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_margin="16dp"
-                    android:src="@drawable/icon_arrow_right"
-                    android:background="@color/white"/>
-            </RelativeLayout>
+                     android:id="@+id/icon2"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_alignParentLeft="true"
+                     android:layout_centerVertical="true"
+                     android:layout_margin="16dp"
+                     android:drawableRight="@drawable/idea"
+                     android:textColor="@color/black"
+                     android:textSize="14sp" />
+                 <TextView
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_toRightOf="@id/icon2"
+                     android:text="设备信息"
+                     android:layout_centerVertical="true"
+                     android:textColor="@color/black"
+                     />
+                 <ImageView
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_alignParentRight="true"
+                     android:layout_centerVertical="true"
+                     android:layout_margin="16dp"
+                     android:src="@drawable/icon_arrow_right"
+                     android:background="@color/white"/>
+             </RelativeLayout>-->
             <RelativeLayout
                 android:id="@+id/eyecat_doorbell"
                 android:layout_width="match_parent"
@@ -136,13 +134,17 @@
                     android:layout_centerVertical="true"
                     android:textColor="@color/black"
                     />
-                <Switch
+                <ToggleButton
                     android:id="@+id/doorbelllight_onoff"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_margin="16dp"
+                    android:button="@drawable/button_toggle_switch"
+                    android:text=""
+                    android:textOff=""
+                    android:textOn=""
                     android:background="@color/white"/>
             </RelativeLayout>
             <RelativeLayout
@@ -170,47 +172,17 @@
                     android:layout_centerVertical="true"
                     android:textColor="@color/black"
                     />
-                <Switch
+                <ToggleButton
                     android:id="@+id/human_detection_onoff"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
+                    android:text=""
+                    android:textOff=""
+                    android:textOn=""
                     android:layout_margin="16dp"
-                    android:background="@color/white"/>
-            </RelativeLayout>
-            <RelativeLayout
-                android:id="@+id/eyecat_do_not_disturb"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:background="@color/white"
-                >
-                <TextView
-                    android:id="@+id/icon5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:layout_margin="16dp"
-                    android:drawableRight="@drawable/idea"
-                    android:textColor="@color/black"
-                    android:textSize="14sp" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/icon5"
-                    android:text="免打扰"
-                    android:layout_centerVertical="true"
-                    android:textColor="@color/black"
-                    />
-                <Switch
-                    android:id="@+id/do_not_disturb_onoff"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_margin="16dp"
+                    android:button="@drawable/button_toggle_switch"
                     android:background="@color/white"/>
             </RelativeLayout>
             <RelativeLayout
@@ -248,84 +220,14 @@
                     android:background="@color/white"/>
             </RelativeLayout>
             <RelativeLayout
-                android:id="@+id/eyecat_bind_lock"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="1dp"
-                android:background="@color/white"
-                >
-                <TextView
-                    android:id="@+id/icon7"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:layout_margin="16dp"
-                    android:drawableRight="@drawable/idea"
-                    android:textColor="@color/black"
-                    android:textSize="14sp" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/icon7"
-                    android:text="门锁绑定"
-                    android:layout_centerVertical="true"
-                    android:textColor="@color/black"
-                    />
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_margin="16dp"
-                    android:src="@drawable/icon_arrow_right"
-                    android:background="@color/white"/>
-            </RelativeLayout>
-            <RelativeLayout
-                android:id="@+id/eyecat_doorbell_sound"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="1dp"
-                android:background="@color/white"
-                >
-                <TextView
-                    android:id="@+id/icon8"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:layout_margin="16dp"
-                    android:drawableRight="@drawable/idea"
-                    android:textColor="@color/black"
-                    android:textSize="14sp" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/icon8"
-                    android:text="门锁声音"
-                    android:layout_centerVertical="true"
-                    android:textColor="@color/black"
-                    />
-
-                <ImageView
-                    android:id="@+id/arrow"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_margin="16dp"
-                    android:src="@drawable/icon_arrow_right"
-                    android:background="@color/white"/>
-            </RelativeLayout>
-            <RelativeLayout
-                android:id="@+id/eyecat_visitor_record"
+                android:id="@+id/history_call_relatvie"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:background="@color/white"
                 >
                 <TextView
-                    android:id="@+id/icon9"
+                    android:id="@+id/history_call_textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
@@ -337,8 +239,42 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/icon9"
-                    android:text="访客记录"
+                    android:layout_toRightOf="@id/history_call_textview"
+                    android:text="门铃记录"
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/black"
+                    />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="16dp"
+                    android:src="@drawable/icon_arrow_right"
+                    android:background="@color/white"/>
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/history_warn_relative"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:background="@color/white"
+                >
+                <TextView
+                    android:id="@+id/history_warn_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="16dp"
+                    android:drawableRight="@drawable/idea"
+                    android:textColor="@color/black"
+                    android:textSize="14sp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/history_warn_textview"
+                    android:text="报警记录"
                     android:layout_centerVertical="true"
                     android:textColor="@color/black"
                     />
@@ -386,6 +322,7 @@
                     android:background="@color/white"/>
             </RelativeLayout>
             <TextView
+                android:id="@+id/restart_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"

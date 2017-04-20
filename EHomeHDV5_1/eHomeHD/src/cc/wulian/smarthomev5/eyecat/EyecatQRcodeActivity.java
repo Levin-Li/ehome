@@ -19,7 +19,9 @@ import com.eques.icvss.utils.Method;
 
 import org.json.JSONObject;
 
+import cc.wulian.h5plus.common.JsUtil;
 import cc.wulian.smarthomev5.R;
+import cc.wulian.smarthomev5.service.html5plus.plugins.SmarthomeFeatureImpl;
 
 
 /**
@@ -148,6 +150,8 @@ public class EyecatQRcodeActivity extends Activity implements View.OnClickListen
                     @Override
                     public void run() {
                         Toast.makeText(EyecatQRcodeActivity.this,"设备已经绑定，无需再绑定",Toast.LENGTH_LONG).show();
+                        JsUtil.getInstance().execCallback(SmarthomeFeatureImpl.pWebview, SmarthomeFeatureImpl.callbackid,"0", JsUtil.OK, false);
+                        finish();
                     }
                 });
             }else if("4402".equals(code)){
