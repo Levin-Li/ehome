@@ -90,11 +90,12 @@ public class EyecatVideoCallActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		EyecatManager.getInstance().addPacketListener(batteryStatusListener);
+
 		new Thread(){
 			@Override
 			public void run() {
 				showVideo();
+				showBatteryStatus();
 			}
 		}.start();
 	}
@@ -223,7 +224,9 @@ public class EyecatVideoCallActivity extends Activity {
 			});
 		}
 	}
-
+	private void showBatteryStatus(){
+		EyecatManager.getInstance().addPacketListener(batteryStatusListener);
+	}
 	private void callSpeakerSetting(boolean f) {
 		if (f) {
 
