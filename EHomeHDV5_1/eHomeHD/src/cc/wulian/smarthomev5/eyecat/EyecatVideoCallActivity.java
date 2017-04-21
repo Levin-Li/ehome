@@ -283,7 +283,7 @@ public class EyecatVideoCallActivity extends Activity {
 		setAudioMute(); //设置是否静音
 		
 		if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-			surfaceView.getHolder().setFixedSize(screenWidthDip, screenHeightDip);
+			surfaceView.getHolder().setFixedSize(screenHeightDip,screenWidthDip);
 		} else {
 			getVerticalPixel();
 		}

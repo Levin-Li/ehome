@@ -170,12 +170,13 @@
     </FrameLayout>
     <ImageView
         android:id="@+id/btn_soundSwitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:src="@drawable/icon_talkback"
-        android:scaleType="center"
+        android:scaleType="centerCrop"
+        android:background="@drawable/bg_icon_big_circular_green"
         />
 
 
