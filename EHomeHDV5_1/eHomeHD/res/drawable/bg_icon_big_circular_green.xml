@@ -10,8 +10,8 @@
         android:width="1px"
         android:color="#E7E8EA"/>
     <size
-        android:width="40dp"
-        android:height="40dp"
+         android:width="40dp"
+            android:height="40dp"
         />
 
 </shape>

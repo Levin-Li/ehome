@@ -41,6 +41,8 @@ import java.util.Date;
 
 import cc.wulian.ihome.wan.util.StringUtil;
 import cc.wulian.smarthomev5.R;
+import cc.wulian.smarthomev5.utils.ScreenSwitchUtils;
+import cc.wulian.smarthomev5.view.CircleImageView;
 
 public class EyecatVideoCallActivity extends Activity {
 	private SurfaceView surfaceView;
@@ -57,8 +59,7 @@ public class EyecatVideoCallActivity extends Activity {
 	private LinearLayout linear_padding;
 	private FrameLayout btnCapture, btnMute, btnHangupCall;
 	private Handler handler = new Handler(Looper.getMainLooper());
-
-	private ImageView btnSoundSwitch,iv_mute,levelone,leveltwo,levelthree,levelfour,levelfive;
+	private ImageView iv_mute,levelone,leveltwo,levelthree,levelfour,levelfive,btnSoundSwitch;
 	private TextView battery_status_title;
 	int width = 640;
 	int height = 480;
@@ -66,8 +67,10 @@ public class EyecatVideoCallActivity extends Activity {
 	private int screenWidthDip;
 	private int screenHeightDip;
 	private String bid;
+	private ScreenSwitchUtils instance;
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		instance = ScreenSwitchUtils.init(this.getApplicationContext());
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
 		setContentView(R.layout.eyecat_activity_videomain);
 
@@ -87,6 +90,25 @@ public class EyecatVideoCallActivity extends Activity {
 		hangUpCall();
 	}
 
+	@Override
+	protected void onStart() {
+		super.onStart();
+		instance.start(this);
+	}
+	@Override
+	protected void onStop() {
+		super.onStop();
+		instance.stop();
+	}
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		if (instance.isPortrait()) {
+			// 切换成竖屏
+		} else {
+			// 切换成横屏
+		}
+	}
 	@Override
 	protected void onResume() {
 		super.onResume();

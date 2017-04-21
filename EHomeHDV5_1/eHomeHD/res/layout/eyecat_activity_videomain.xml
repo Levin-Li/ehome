@@ -24,12 +24,15 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:gravity="center"
-                android:orientation="vertical" >
+                android:orientation="vertical"
+
+                >
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:orientation="horizontal"
+                    android:visibility="invisible"
                     >
                     <ImageView
                         android:id="@+id/level_one"
@@ -171,7 +174,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/icon_talkback" />
+        android:src="@drawable/icon_talkback"
+        android:scaleType="center"
+        />
 
 
 
