@@ -59,7 +59,8 @@ public class EyecatVideoCallActivity extends Activity {
 	private LinearLayout linear_padding;
 	private FrameLayout btnCapture, btnMute, btnHangupCall;
 	private Handler handler = new Handler(Looper.getMainLooper());
-	private ImageView iv_mute,levelone,leveltwo,levelthree,levelfour,levelfive,btnSoundSwitch;
+	private ImageView iv_mute,levelone,leveltwo,levelthree,levelfour,levelfive;
+	private CircleImageView btnSoundSwitch;
 	private TextView battery_status_title;
 	int width = 640;
 	int height = 480;
@@ -85,6 +86,7 @@ public class EyecatVideoCallActivity extends Activity {
 		EyecatManager.getInstance().login();
 		EyecatManager.getInstance().addPacketListener(videoCallListener);
 		EyecatManager.getInstance().addPacketListener(videoPlayingListener);
+
 	}
 	public void onBackPressed() {
 		hangUpCall();
@@ -148,7 +150,7 @@ public class EyecatVideoCallActivity extends Activity {
 		btnHangupCall = (FrameLayout) findViewById(R.id.btn_hangupCall);
 		btnHangupCall.setOnClickListener(new MyOnClickListener());
 
-		btnSoundSwitch = (ImageView) findViewById(R.id.btn_soundSwitch);
+		btnSoundSwitch = (CircleImageView) findViewById(R.id.btn_soundSwitch);
 		btnSoundSwitch.setOnTouchListener(new MyOnTouchListener());
 
 		linear_padding = (LinearLayout) findViewById(R.id.linear_padding);
@@ -219,7 +221,11 @@ public class EyecatVideoCallActivity extends Activity {
 					}else{
 						layoutParams = new LayoutParams(screenWidthDip, (screenWidthDip / 7));
 					}
-					linear_padding.setLayoutParams(layoutParams);
+					if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+						linear_padding.setVisibility(View.GONE);
+					}else{
+						linear_padding.setLayoutParams(layoutParams);
+					}
 					startUpCall(uid);
 //					if(hasVideo){ //是否显示视频
 //						callId = EyecatManager.getInstance().getICVSSUserInstance().equesOpenCall(uid, surfaceView.getHolder().getSurface()); //视频 + 语音通话
@@ -378,47 +384,7 @@ public class EyecatVideoCallActivity extends Activity {
 			runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						if(status == 2){
-							battery_status_title.setText("充电中");
-						}else {
-							battery_status_title.setText(level+"%");
-						}
-						if(level>=80){
-							levelone.setVisibility(View.VISIBLE);
-							leveltwo.setVisibility(View.VISIBLE);
-							levelthree.setVisibility(View.VISIBLE);
-							levelfour.setVisibility(View.VISIBLE);
-							levelfive.setVisibility(View.VISIBLE);
-							levelone.setImageResource(R.drawable.barry_green);
-						}else if(level<80&&level>=60){
-							levelone.setVisibility(View.VISIBLE);
-							leveltwo.setVisibility(View.VISIBLE);
-							levelthree.setVisibility(View.VISIBLE);
-							levelfour.setVisibility(View.VISIBLE);
-							levelfive.setVisibility(View.INVISIBLE);
-							levelone.setImageResource(R.drawable.barry_green);
-						}else if(level<60&&level>=40){
-							levelone.setVisibility(View.VISIBLE);
-							leveltwo.setVisibility(View.VISIBLE);
-							levelthree.setVisibility(View.VISIBLE);
-							levelfour.setVisibility(View.INVISIBLE);
-							levelfive.setVisibility(View.INVISIBLE);
-							levelone.setImageResource(R.drawable.barry_green);
-						}else if(level<40&&level>=20){
-							levelone.setVisibility(View.VISIBLE);
-							leveltwo.setVisibility(View.VISIBLE);
-							levelthree.setVisibility(View.INVISIBLE);
-							levelfour.setVisibility(View.INVISIBLE);
-							levelfive.setVisibility(View.INVISIBLE);
-							levelone.setImageResource(R.drawable.barry_green);
-						}else if(level<20){
-							levelone.setVisibility(View.VISIBLE);
-							leveltwo.setVisibility(View.INVISIBLE);
-							levelthree.setVisibility(View.INVISIBLE);
-							levelfour.setVisibility(View.INVISIBLE);
-							levelfive.setVisibility(View.INVISIBLE);
-							levelone.setImageResource(R.drawable.barry_red);
-						}
+						Toast.makeText(EyecatVideoCallActivity.this,  status+"+"+level, Toast.LENGTH_SHORT).show();
 					}
 				});
 
