@@ -18,7 +18,8 @@ import com.yuantuo.customview.ui.WLDialog;
 import org.json.JSONObject;
 
 import cc.wulian.h5plus.common.JsUtil;
-import cc.wulian.ihome.wan.sdk.user.entity.AMSDeviceInfo;
+import cc.wulian.ihome.wan.core.http.Result;
+import cc.wulian.ihome.wan.entity.GatewayInfo;
 import cc.wulian.ihome.wan.util.StringUtil;
 import cc.wulian.ihome.wan.util.TaskExecutor;
 import cc.wulian.smarthomev5.R;
@@ -93,7 +94,16 @@ public class EyecatSettingActivity extends Activity {
                         TaskExecutor.getInstance().execute(new Runnable() {
                             @Override
                             public void run() {
-                                WLUserManager.getInstance().getStub().deviceUpdate(bid,null,editText.getText().toString());
+                                Result opResult = WLUserManager.getInstance().getStub().deviceUpdate(bid,null,editText.getText().toString());
+                                if(opResult != null && opResult.status == 0){
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            editText.setText(editText.getText().toString());
+                                        }
+                                    });
+                                }
+
                             }
                         });
                     }
@@ -227,17 +237,17 @@ public class EyecatSettingActivity extends Activity {
             });
         } else {
             uid = device.getUid();
-            final AMSDeviceInfo deviceInfo = WLUserManager.getInstance().getStub().getDeviceInfo(bid);
+            final GatewayInfo deviceInfo = WLUserManager.getInstance().getStub().getSimpleDeviceByUser(bid);
             Log.i("eyecat:", JSON.toJSONString(deviceInfo));
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     if(deviceInfo != null){
                         String deviceName = "";
-                        if(StringUtil.isNullOrEmpty(deviceInfo.getDeviceName())){
-                            deviceName = deviceInfo.getDeviceId();
+                        if(StringUtil.isNullOrEmpty(deviceInfo.getDeviceAlias())){
+                            deviceName = bid;
                         }else{
-                            deviceName = deviceInfo.getDeviceName();
+                            deviceName = deviceInfo.getDeviceAlias();
                         }
                         setup_name.setText(deviceName);
                     }

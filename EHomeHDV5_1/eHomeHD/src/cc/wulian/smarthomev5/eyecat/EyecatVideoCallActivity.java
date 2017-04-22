@@ -18,9 +18,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
@@ -42,7 +40,6 @@ import java.util.Date;
 import cc.wulian.ihome.wan.util.StringUtil;
 import cc.wulian.smarthomev5.R;
 import cc.wulian.smarthomev5.utils.ScreenSwitchUtils;
-import cc.wulian.smarthomev5.view.CircleImageView;
 
 public class EyecatVideoCallActivity extends Activity {
 	private SurfaceView surfaceView;
@@ -59,8 +56,7 @@ public class EyecatVideoCallActivity extends Activity {
 	private LinearLayout linear_padding;
 	private FrameLayout btnCapture, btnMute, btnHangupCall;
 	private Handler handler = new Handler(Looper.getMainLooper());
-	private ImageView iv_mute,levelone,leveltwo,levelthree,levelfour,levelfive;
-	private CircleImageView btnSoundSwitch;
+	private ImageView iv_mute,levelone,leveltwo,levelthree,levelfour,levelfive,btnSoundSwitch;
 	private TextView battery_status_title;
 	int width = 640;
 	int height = 480;
@@ -83,10 +79,6 @@ public class EyecatVideoCallActivity extends Activity {
 		hasVideo = getIntent().getBooleanExtra(Method.ATTR_CALL_HASVIDEO, false);
 		bid = getIntent().getStringExtra("bid");
 		initUI();
-		EyecatManager.getInstance().login();
-		EyecatManager.getInstance().addPacketListener(videoCallListener);
-		EyecatManager.getInstance().addPacketListener(videoPlayingListener);
-
 	}
 	public void onBackPressed() {
 		hangUpCall();
@@ -114,12 +106,15 @@ public class EyecatVideoCallActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-
+		EyecatManager.getInstance().addPacketListener(videoCallListener);
+		EyecatManager.getInstance().addPacketListener(videoPlayingListener);
+		EyecatManager.getInstance().addPacketListener(batteryStatusListener);
+		EyecatManager.getInstance().addPacketListener(deviceDetailListener);
+		EyecatManager.getInstance().login();
 		new Thread(){
 			@Override
 			public void run() {
 				showVideo();
-				showBatteryStatus();
 			}
 		}.start();
 	}
@@ -130,7 +125,10 @@ public class EyecatVideoCallActivity extends Activity {
 		isExit = true;
 		EyecatManager.getInstance().removePacketListener(videoCallListener);
 		EyecatManager.getInstance().removePacketListener(videoPlayingListener);
+		EyecatManager.getInstance().removePacketListener(batteryStatusListener);
+		EyecatManager.getInstance().removePacketListener(deviceDetailListener);
 		handler.removeCallbacks(runnable);
+		finish();
 	}
 	protected void onDestroy() {
 		super.onDestroy();
@@ -150,7 +148,7 @@ public class EyecatVideoCallActivity extends Activity {
 		btnHangupCall = (FrameLayout) findViewById(R.id.btn_hangupCall);
 		btnHangupCall.setOnClickListener(new MyOnClickListener());
 
-		btnSoundSwitch = (CircleImageView) findViewById(R.id.btn_soundSwitch);
+		btnSoundSwitch = (ImageView) findViewById(R.id.btn_soundSwitch);
 		btnSoundSwitch.setOnTouchListener(new MyOnTouchListener());
 
 		linear_padding = (LinearLayout) findViewById(R.id.linear_padding);
@@ -205,6 +203,7 @@ public class EyecatVideoCallActivity extends Activity {
 			});
 		}else{
 			uid = device.getUid();
+			EyecatManager.getInstance().getICVSSUserInstance().equesGetDeviceInfo(bid);
 			runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
@@ -221,11 +220,7 @@ public class EyecatVideoCallActivity extends Activity {
 					}else{
 						layoutParams = new LayoutParams(screenWidthDip, (screenWidthDip / 7));
 					}
-					if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-						linear_padding.setVisibility(View.GONE);
-					}else{
-						linear_padding.setLayoutParams(layoutParams);
-					}
+					linear_padding.setLayoutParams(layoutParams);
 					startUpCall(uid);
 //					if(hasVideo){ //是否显示视频
 //						callId = EyecatManager.getInstance().getICVSSUserInstance().equesOpenCall(uid, surfaceView.getHolder().getSurface()); //视频 + 语音通话
@@ -253,7 +248,7 @@ public class EyecatVideoCallActivity extends Activity {
 		}
 	}
 	private void showBatteryStatus(){
-		EyecatManager.getInstance().addPacketListener(batteryStatusListener);
+
 	}
 	private void callSpeakerSetting(boolean f) {
 		if (f) {
@@ -371,6 +366,19 @@ public class EyecatVideoCallActivity extends Activity {
 			handler.removeCallbacks(runnable);
 		}
 	};
+	private EyecatManager.PacketListener deviceDetailListener = new EyecatManager.PacketListener() {
+		@Override
+		public String getMenthod() {
+			return Method.METHOD_DEVICEINFO_RESULT;
+		}
+
+		@Override
+		public void processPacket(final JSONObject object) {
+			final int status = object.optInt("battery_status");
+			final int level = object.optInt("battery_level");
+			showBattery(status,level);
+		}
+	};
 	private EyecatManager.PacketListener batteryStatusListener = new EyecatManager.PacketListener() {
 		@Override
 		public String getMenthod() {
@@ -381,15 +389,61 @@ public class EyecatVideoCallActivity extends Activity {
 		public void processPacket(JSONObject object) {
 			final int status = object.optInt(Method.ATTR_STATUS);
 			final int level = object.optInt(Method.ATTR_LEVEL);
-			runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						Toast.makeText(EyecatVideoCallActivity.this,  status+"+"+level, Toast.LENGTH_SHORT).show();
-					}
-				});
+			showBattery(status,level);
 
 		}
+
+
 	};
+	private void showBattery(final int  status,final int level) {
+
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if(status == 2){
+					battery_status_title.setText("充电中");
+				}else {
+					battery_status_title.setText(level+"%");
+				}
+				if(level>=80){
+					levelone.setVisibility(View.VISIBLE);
+					leveltwo.setVisibility(View.VISIBLE);
+					levelthree.setVisibility(View.VISIBLE);
+					levelfour.setVisibility(View.VISIBLE);
+					levelfive.setVisibility(View.VISIBLE);
+					levelone.setImageResource(R.drawable.barry_green);
+				}else if(level<80&&level>=60){
+					levelone.setVisibility(View.VISIBLE);
+					leveltwo.setVisibility(View.VISIBLE);
+					levelthree.setVisibility(View.VISIBLE);
+					levelfour.setVisibility(View.VISIBLE);
+					levelfive.setVisibility(View.INVISIBLE);
+					levelone.setImageResource(R.drawable.barry_green);
+				}else if(level<60&&level>=40){
+					levelone.setVisibility(View.VISIBLE);
+					leveltwo.setVisibility(View.VISIBLE);
+					levelthree.setVisibility(View.VISIBLE);
+					levelfour.setVisibility(View.INVISIBLE);
+					levelfive.setVisibility(View.INVISIBLE);
+					levelone.setImageResource(R.drawable.barry_green);
+				}else if(level<40&&level>=20){
+					levelone.setVisibility(View.VISIBLE);
+					leveltwo.setVisibility(View.VISIBLE);
+					levelthree.setVisibility(View.INVISIBLE);
+					levelfour.setVisibility(View.INVISIBLE);
+					levelfive.setVisibility(View.INVISIBLE);
+					levelone.setImageResource(R.drawable.barry_green);
+				}else if(level<20){
+					levelone.setVisibility(View.VISIBLE);
+					leveltwo.setVisibility(View.INVISIBLE);
+					levelthree.setVisibility(View.INVISIBLE);
+					levelfour.setVisibility(View.INVISIBLE);
+					levelfive.setVisibility(View.INVISIBLE);
+					levelone.setImageResource(R.drawable.barry_red);
+				}
+			}
+		});
+	}
 	private class MyOnTouchListener implements OnTouchListener {
 		
 		public boolean onTouch(View v, MotionEvent event) {
