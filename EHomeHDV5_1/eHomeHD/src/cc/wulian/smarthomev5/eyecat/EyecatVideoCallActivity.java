@@ -70,11 +70,7 @@ public class EyecatVideoCallActivity extends Activity {
 		instance = ScreenSwitchUtils.init(this.getApplicationContext());
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
 		setContentView(R.layout.eyecat_activity_videomain);
-		if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-						linear_padding.setVisibility(View.GONE);
-					}else{
-						linear_padding.setVisibility(View.VISIBLE);
-					}
+
 		audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		current = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
 		audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, current, 0);
@@ -83,6 +79,11 @@ public class EyecatVideoCallActivity extends Activity {
 		hasVideo = getIntent().getBooleanExtra(Method.ATTR_CALL_HASVIDEO, false);
 		bid = getIntent().getStringExtra("bid");
 		initUI();
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            linear_padding.setVisibility(View.GONE);
+        }else{
+            linear_padding.setVisibility(View.VISIBLE);
+        }
 	}
 	public void onBackPressed() {
 		hangUpCall();
