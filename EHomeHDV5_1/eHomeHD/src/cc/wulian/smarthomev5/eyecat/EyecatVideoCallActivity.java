@@ -98,9 +98,11 @@ public class EyecatVideoCallActivity extends Activity {
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 		if (instance.isPortrait()) {
+			linear_padding.setVisibility(View.VISIBLE);
 			// 切换成竖屏
 		} else {
 			// 切换成横屏
+			linear_padding.setVisibility(View.GONE);
 		}
 	}
 	@Override
