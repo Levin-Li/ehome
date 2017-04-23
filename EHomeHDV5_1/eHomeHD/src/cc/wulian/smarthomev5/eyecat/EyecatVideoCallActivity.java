@@ -60,7 +60,7 @@ public class EyecatVideoCallActivity extends Activity {
 	private TextView battery_status_title;
 	int width = 640;
 	int height = 480;
-	
+
 	private int screenWidthDip;
 	private int screenHeightDip;
 	private String bid;
@@ -220,7 +220,11 @@ public class EyecatVideoCallActivity extends Activity {
 					}else{
 						layoutParams = new LayoutParams(screenWidthDip, (screenWidthDip / 7));
 					}
-					linear_padding.setLayoutParams(layoutParams);
+					if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+						linear_padding.setVisibility(View.GONE);
+					}else{
+						linear_padding.setLayoutParams(layoutParams);
+					}
 					startUpCall(uid);
 //					if(hasVideo){ //是否显示视频
 //						callId = EyecatManager.getInstance().getICVSSUserInstance().equesOpenCall(uid, surfaceView.getHolder().getSurface()); //视频 + 语音通话
@@ -284,6 +288,7 @@ public class EyecatVideoCallActivity extends Activity {
 		setAudioMute(); //设置是否静音
 		
 		if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+			Toast.makeText(this, screenHeightDip+"+"+screenWidthDip, Toast.LENGTH_SHORT).show();
 			surfaceView.getHolder().setFixedSize(screenHeightDip,screenWidthDip);
 		} else {
 			getVerticalPixel();
