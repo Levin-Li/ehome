@@ -220,11 +220,11 @@ public class EyecatVideoCallActivity extends Activity {
 					}else{
 						layoutParams = new LayoutParams(screenWidthDip, (screenWidthDip / 7));
 					}
-					if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-						linear_padding.setVisibility(View.GONE);
-					}else{
-						linear_padding.setLayoutParams(layoutParams);
-					}
+//					if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//						linear_padding.setVisibility(View.GONE);
+//					}else{
+//						linear_padding.setLayoutParams(layoutParams);
+//					}
 					startUpCall(uid);
 //					if(hasVideo){ //是否显示视频
 //						callId = EyecatManager.getInstance().getICVSSUserInstance().equesOpenCall(uid, surfaceView.getHolder().getSurface()); //视频 + 语音通话
