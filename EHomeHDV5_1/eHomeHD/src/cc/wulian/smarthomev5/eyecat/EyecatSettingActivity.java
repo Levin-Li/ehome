@@ -82,6 +82,7 @@ public class EyecatSettingActivity extends Activity {
             public void onClick(View v) {
                 final EditText editText= new EditText(EyecatSettingActivity.this);
                 editText.setHint("设备名称");
+                editText.setText(setup_name.getText());
                 WLDialog.Builder builder = new WLDialog.Builder(EyecatSettingActivity.this);
                 builder.setTitle("修改设备名");
                 builder.setContentView(editText);
@@ -99,7 +100,7 @@ public class EyecatSettingActivity extends Activity {
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            editText.setText(editText.getText().toString());
+                                            setup_name.setText(editText.getText().toString());
                                         }
                                     });
                                 }
