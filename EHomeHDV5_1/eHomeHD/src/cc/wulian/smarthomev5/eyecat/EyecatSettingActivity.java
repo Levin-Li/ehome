@@ -175,17 +175,49 @@ public class EyecatSettingActivity extends Activity {
         restartDeviceTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EyecatManager.getInstance().getICVSSUserInstance().equesRestartDevice(uid);
+                WLDialog.Builder builder = new WLDialog.Builder(EyecatSettingActivity.this);
+                builder.setTitle("提示");
+                builder.setMessage("确定要重启设备?");
+                builder.setPositiveButton(android.R.string.ok);
+                builder.setNegativeButton(android.R.string.cancel);
+                builder.setListener(new WLDialog.MessageListener() {
+                    @Override
+                    public void onClickPositive(View contentViewLayout) {
+                        EyecatManager.getInstance().getICVSSUserInstance().equesRestartDevice(uid);
+                    }
+
+                    @Override
+                    public void onClickNegative(View contentViewLayout) {
+                    }
+                });
+                builder.create().show();
+
             }
         });
         deleteEyeDeviceTextView = (TextView) findViewById(R.id.eyecat_delete_device);
         deleteEyeDeviceTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DevicesUserManage.unBindDevice(bid);
-                EyecatManager.getInstance().getICVSSUserInstance().equesDelDevice(bid);
-                JsUtil.getInstance().execCallback(SmarthomeFeatureImpl.pWebview, SmarthomeFeatureImpl.callbackid,"0", JsUtil.OK, false);
-                finish();
+                WLDialog.Builder builder = new WLDialog.Builder(EyecatSettingActivity.this);
+                builder.setTitle("提示");
+                builder.setMessage("删除设备会把设备相关的信息都删除!");
+                builder.setPositiveButton(android.R.string.ok);
+                builder.setNegativeButton(android.R.string.cancel);
+                builder.setListener(new WLDialog.MessageListener() {
+                    @Override
+                    public void onClickPositive(View contentViewLayout) {
+                        DevicesUserManage.unBindDevice(bid);
+                        EyecatManager.getInstance().getICVSSUserInstance().equesDelDevice(bid);
+                        JsUtil.getInstance().execCallback(SmarthomeFeatureImpl.pWebview, SmarthomeFeatureImpl.callbackid,"0", JsUtil.OK, false);
+                        finish();
+                    }
+
+                    @Override
+                    public void onClickNegative(View contentViewLayout) {
+                    }
+                });
+                builder.create().show();
+
             }
         });
     }
@@ -201,12 +233,12 @@ public class EyecatSettingActivity extends Activity {
     void syncUid() {
         int count = 0;
         EyecatManager.EyecatDevice device = null;
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(EyecatSettingActivity.this, "正在尝试连接。。", Toast.LENGTH_SHORT).show();
-            }
-        });
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                Toast.makeText(EyecatSettingActivity.this, "正在尝试连接。。", Toast.LENGTH_SHORT).show();
+//            }
+//        });
         while (count < 10) {
             device = EyecatManager.getInstance().getDevice(bid);
             if (device == null) {

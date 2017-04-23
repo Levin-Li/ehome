@@ -214,7 +214,7 @@ public class EyecatVideoCallActivity extends Activity {
 			runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					Toast.makeText(EyecatVideoCallActivity.this,"开始打开回话:"+uid+",hasVideo:"+hasVideo,Toast.LENGTH_SHORT).show();
+//					Toast.makeText(EyecatVideoCallActivity.this,"开始打开回话:"+uid+",hasVideo:"+hasVideo,Toast.LENGTH_SHORT).show();
 					boolean bo = audioManager.isWiredHeadsetOn();
 					if(!bo){
 						openSpeaker();
