@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="C:\Users\Administrator\.gradle\caches\modules-2\files-2.1\com.burgstaller\okhttp-digest\1.10\ab01486e496bb761888197b3c5c179f49b79d668\okhttp-digest-1.10.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="ab01486e496bb761888197b3c5c179f49b79d668">
+        <dex dex="E:\projects\wulian\doorcat\develop\cateye\projects\device\EquesDoorbell\app\build\intermediates\pre-dexed\debug\okhttp-digest-1.10_041a76aff47bda151b112bec10ea35524903b076.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Administrator\.gradle\caches\modules-2\files-2.1\com.squareup.okio\okio\1.11.0\840897fcd7223a8143f1d9b6f69714e7be34fd50\okio-1.11.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="840897fcd7223a8143f1d9b6f69714e7be34fd50">
+        <dex dex="E:\projects\wulian\doorcat\develop\cateye\projects\device\EquesDoorbell\app\build\intermediates\pre-dexed\debug\okio-1.11.0_893d7cba6fd833c845f42c6194f7ff7a73716aa7.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\projects\wulian\doorcat\develop\cateye\projects\device\EquesDoorbell\app\libs\fastjson-1.2.7.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="a5c721e8ea1e18854272879d6ed2770d25feb342">
+        <dex dex="E:\projects\wulian\doorcat\develop\cateye\projects\device\EquesDoorbell\app\build\intermediates\pre-dexed\debug\fastjson-1.2.7_7359ee199b24aea8a073c8a36dd2b5ec6299d279.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Administrator\.gradle\caches\modules-2\files-2.1\com.squareup.okhttp3\okhttp\3.5.0\4b0bb6bfbecbdd42b97ff400af342bfe7f32bc83\okhttp-3.5.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="4b0bb6bfbecbdd42b97ff400af342bfe7f32bc83">
+        <dex dex="E:\projects\wulian\doorcat\develop\cateye\projects\device\EquesDoorbell\app\build\intermediates\pre-dexed\debug\okhttp-3.5.0_c593a7d2ef038914527204d71747c765ea8d1e88.jar" />
+    </item>
+
+</items>
