@@ -263,18 +263,12 @@ public class EyecatVideoCallActivity extends Activity {
 	}
 	private void callSpeakerSetting(boolean f) {
 		if (f) {
-
-			btnSoundSwitch.setBackgroundResource(R.color.action_bar_bg);
-
 			if (callId != null) {
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioRecordEnable(true, callId);
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioPlayEnable(false, callId);
 			}
 			closeSpeaker();
 		} else {
-
-			btnSoundSwitch.setBackgroundResource(R.color.text_gray);
-
 			if (callId != null) {
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioPlayEnable(true, callId);
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioRecordEnable(false, callId);
