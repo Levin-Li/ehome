@@ -53,6 +53,7 @@ public class EyecatWIFISettingTwoActivity extends Activity implements View.OnCli
         eyecat_password = (EditText) findViewById(R.id.eyecat_password);
         eyecat_display_password = (CheckBox) findViewById(R.id.eyecat_display_password);
         eyecat_return = (LinearLayout) findViewById(R.id.eyecat_return);
+        eyecat_return.setOnClickListener(this);
     }
     private String getWifiname(){
         WifiManager wifiMgr = (WifiManager) getSystemService(Context.WIFI_SERVICE);

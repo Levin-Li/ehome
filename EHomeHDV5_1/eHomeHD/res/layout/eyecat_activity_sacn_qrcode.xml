@@ -121,7 +121,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="105px"
         android:layout_marginLeft="55dp"
-        android:textSize="32px"
+        android:textSize="16sp"
         android:textColor="#A9A9A9"
         android:text="1.在门内主机首页找到“系统”菜单进入"
         android:id="@+id/textView" />
@@ -131,7 +131,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="55dp"
-        android:textSize="32px"
+        android:textSize="16sp"
         android:textColor="#A9A9A9"
         android:text="2.在设置里选择“扫描二维码”"
         />

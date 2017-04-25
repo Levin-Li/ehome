@@ -32,21 +32,23 @@
             android:layout_alignParentStart="true"
             android:layout_marginStart="17dp" />
     </RelativeLayout>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            >
+            android:orientation="vertical">
+
             <RelativeLayout
                 android:id="@+id/eyecat_setup_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:background="@color/white"
-                >
+                android:background="@color/white">
+
                 <TextView
                     android:id="@+id/icon1"
                     android:layout_width="wrap_content"
@@ -54,17 +56,18 @@
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:layout_margin="16dp"
-                    android:drawableRight="@drawable/idea"
+                    android:drawableRight="@drawable/setting_name"
                     android:textColor="@color/black"
                     android:textSize="14sp" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
                     android:layout_toRightOf="@id/icon1"
                     android:text="设备名称"
-                    android:layout_centerVertical="true"
-                    android:textColor="@color/black"
-                    />
+                    android:textColor="@color/black" />
+
                 <TextView
                     android:id="@+id/setup_name"
                     android:layout_width="wrap_content"
@@ -72,10 +75,9 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_margin="16dp"
-                    android:text="移康猫眼"
-                    />
+                    android:text="移康猫眼" />
             </RelativeLayout>
-            <!--  <RelativeLayout
+            <RelativeLayout
                  android:id="@+id/eyecat_setup_info"
                  android:layout_width="match_parent"
                  android:layout_height="wrap_content"
@@ -89,7 +91,7 @@
                      android:layout_alignParentLeft="true"
                      android:layout_centerVertical="true"
                      android:layout_margin="16dp"
-                     android:drawableRight="@drawable/idea"
+                     android:drawableRight="@drawable/setting_info"
                      android:textColor="@color/black"
                      android:textSize="14sp" />
                  <TextView
@@ -108,14 +110,14 @@
                      android:layout_margin="16dp"
                      android:src="@drawable/icon_arrow_right"
                      android:background="@color/white"/>
-             </RelativeLayout>-->
+             </RelativeLayout>
             <RelativeLayout
                 android:id="@+id/eyecat_doorbell"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:background="@color/white"
-                >
+                android:background="@color/white">
+
                 <TextView
                     android:id="@+id/icon3"
                     android:layout_width="wrap_content"
@@ -123,17 +125,18 @@
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:layout_margin="16dp"
-                    android:drawableRight="@drawable/idea"
+                    android:drawableRight="@drawable/doorbellring"
                     android:textColor="@color/black"
                     android:textSize="14sp" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
                     android:layout_toRightOf="@id/icon3"
                     android:text="门铃灯"
-                    android:layout_centerVertical="true"
-                    android:textColor="@color/black"
-                    />
+                    android:textColor="@color/black" />
+
                 <ToggleButton
                     android:id="@+id/doorbelllight_onoff"
                     android:layout_width="wrap_content"
@@ -141,57 +144,98 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_margin="16dp"
+                    android:background="@color/white"
                     android:button="@drawable/button_toggle_switch"
                     android:text=""
                     android:textOff=""
-                    android:textOn=""
-                    android:background="@color/white"/>
+                    android:textOn="" />
             </RelativeLayout>
+
+
+
+                <RelativeLayout
+                    android:id="@+id/eyecat_human_detection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:background="@color/white">
+
+                    <TextView
+                        android:id="@+id/icon4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="16dp"
+                        android:drawableRight="@drawable/human_test"
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@id/icon4"
+                        android:text="人体检测"
+                        android:textColor="@color/black" />
+
+                    <ToggleButton
+                        android:id="@+id/human_detection_onoff"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="16dp"
+                        android:background="@color/white"
+                        android:button="@drawable/button_toggle_switch"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn="" />
+                </RelativeLayout>
             <RelativeLayout
-                android:id="@+id/eyecat_human_detection"
+                android:id="@+id/eyecat_notdis"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:background="@color/white"
-                >
+                android:layout_marginTop="1dp"
+                android:background="@color/white">
+
                 <TextView
-                    android:id="@+id/icon4"
+                    android:id="@+id/icon11"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:layout_margin="16dp"
-                    android:drawableRight="@drawable/idea"
+                    android:drawableRight="@drawable/notdis"
                     android:textColor="@color/black"
                     android:textSize="14sp" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/icon4"
-                    android:text="人体检测"
                     android:layout_centerVertical="true"
-                    android:textColor="@color/black"
-                    />
-                <ToggleButton
-                    android:id="@+id/human_detection_onoff"
+                    android:layout_toRightOf="@id/icon11"
+                    android:text="免打扰模式"
+                    android:textColor="@color/black" />
+
+                <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:text=""
-                    android:textOff=""
-                    android:textOn=""
                     android:layout_margin="16dp"
-                    android:button="@drawable/button_toggle_switch"
-                    android:background="@color/white"/>
+                    android:background="@color/white"
+                    android:src="@drawable/icon_arrow_right" />
             </RelativeLayout>
             <RelativeLayout
                 android:id="@+id/eyecat_wifi_setting"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:background="@color/white"
-                >
+                android:background="@color/white">
+
                 <TextView
                     android:id="@+id/icon6"
                     android:layout_width="wrap_content"
@@ -199,33 +243,34 @@
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:layout_margin="16dp"
-                    android:drawableRight="@drawable/idea"
+                    android:drawableRight="@drawable/wifi_setting"
                     android:textColor="@color/black"
                     android:textSize="14sp" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
                     android:layout_toRightOf="@id/icon6"
                     android:text="WIFI配置"
-                    android:layout_centerVertical="true"
-                    android:textColor="@color/black"
-                    />
+                    android:textColor="@color/black" />
+
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_margin="16dp"
-                    android:src="@drawable/icon_arrow_right"
-                    android:background="@color/white"/>
+                    android:background="@color/white"
+                    android:src="@drawable/icon_arrow_right" />
             </RelativeLayout>
             <RelativeLayout
                 android:id="@+id/history_call_relatvie"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:background="@color/white"
-                >
+                android:background="@color/white">
+
                 <TextView
                     android:id="@+id/history_call_textview"
                     android:layout_width="wrap_content"
@@ -233,33 +278,69 @@
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:layout_margin="16dp"
-                    android:drawableRight="@drawable/idea"
+                    android:drawableRight="@drawable/lock"
                     android:textColor="@color/black"
                     android:textSize="14sp" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/history_call_textview"
-                    android:text="门铃记录"
                     android:layout_centerVertical="true"
-                    android:textColor="@color/black"
-                    />
+                    android:layout_toRightOf="@id/history_call_textview"
+                    android:text="门锁绑定"
+                    android:textColor="@color/black" />
+
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_margin="16dp"
-                    android:src="@drawable/icon_arrow_right"
-                    android:background="@color/white"/>
+                    android:background="@color/white"
+                    android:src="@drawable/icon_arrow_right" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/doorbellringsound"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:background="@color/white">
+
+                <TextView
+                    android:id="@+id/doorbellringsound_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="16dp"
+                    android:drawableRight="@drawable/doorbellsound"
+                    android:textColor="@color/black"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@id/doorbellringsound_textview"
+                    android:text="门铃声音"
+                    android:textColor="@color/black" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="16dp"
+                    android:background="@color/white"
+                    android:src="@drawable/icon_arrow_right" />
             </RelativeLayout>
             <RelativeLayout
                 android:id="@+id/history_warn_relative"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:background="@color/white"
-                >
+                android:background="@color/white">
+
                 <TextView
                     android:id="@+id/history_warn_textview"
                     android:layout_width="wrap_content"
@@ -267,33 +348,35 @@
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:layout_margin="16dp"
-                    android:drawableRight="@drawable/idea"
+                    android:drawableRight="@drawable/vister"
                     android:textColor="@color/black"
                     android:textSize="14sp" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/history_warn_textview"
-                    android:text="报警记录"
                     android:layout_centerVertical="true"
-                    android:textColor="@color/black"
-                    />
+                    android:layout_toRightOf="@id/history_warn_textview"
+                    android:text="访客记录"
+                    android:textColor="@color/black" />
+
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_margin="16dp"
-                    android:src="@drawable/icon_arrow_right"
-                    android:background="@color/white"/>
+                    android:background="@color/white"
+                    android:src="@drawable/icon_arrow_right" />
             </RelativeLayout>
+
             <RelativeLayout
                 android:id="@+id/eyecat_image_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:background="@color/white"
-                >
+                android:background="@color/white">
+
                 <TextView
                     android:id="@+id/icon10"
                     android:layout_width="wrap_content"
@@ -301,50 +384,51 @@
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:layout_margin="16dp"
-                    android:drawableRight="@drawable/idea"
+                    android:drawableRight="@drawable/image"
                     android:textColor="@color/black"
                     android:textSize="14sp" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
                     android:layout_toRightOf="@id/icon10"
                     android:text="图像信息"
-                    android:layout_centerVertical="true"
-                    android:textColor="@color/black"
-                    />
+                    android:textColor="@color/black" />
+
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_margin="16dp"
-                    android:src="@drawable/icon_arrow_right"
-                    android:background="@color/white"/>
+                    android:background="@color/white"
+                    android:src="@drawable/icon_arrow_right" />
             </RelativeLayout>
+
             <TextView
                 android:id="@+id/restart_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:text="远程重启设备"
-                android:textColor="@color/black"
                 android:layout_centerVertical="true"
+                android:layout_marginTop="20dp"
+                android:background="@color/white"
                 android:gravity="center"
                 android:padding="20dp"
-                android:layout_marginTop="20dp"
-                />
+                android:text="远程重启设备"
+                android:textColor="@color/black" />
+
             <TextView
+                android:id="@+id/eyecat_delete_device"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:id="@+id/eyecat_delete_device"
-                android:text="删除设备"
-               android:textColor="@color/black"
                 android:layout_centerVertical="true"
+                android:layout_marginTop="20dp"
+                android:background="@color/white"
                 android:gravity="center"
                 android:padding="20dp"
-                android:layout_marginTop="20dp"
-                />
+                android:text="删除摄像机"
+                android:textColor="@color/red_delete" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
