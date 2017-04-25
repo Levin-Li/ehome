@@ -54,9 +54,9 @@ public class EyecatVideoCallActivity extends Activity {
 	private boolean isExit = false;
 	private AudioManager audioManager;
 	private LinearLayout linear_padding;
-	private FrameLayout btnCapture, btnMute, btnHangupCall;
+	private FrameLayout btnCapture, btnMute, btnHangupCall,btnSoundSwitch;
 	private Handler handler = new Handler(Looper.getMainLooper());
-	private ImageView iv_mute,levelone,leveltwo,levelthree,levelfour,levelfive,btnSoundSwitch;
+	private ImageView iv_mute,levelone,leveltwo,levelthree,levelfour,levelfive;
 	private TextView battery_status_title;
 	int width = 640;
 	int height = 480;
@@ -155,7 +155,7 @@ public class EyecatVideoCallActivity extends Activity {
 		btnHangupCall = (FrameLayout) findViewById(R.id.btn_hangupCall);
 		btnHangupCall.setOnClickListener(new MyOnClickListener());
 
-		btnSoundSwitch = (ImageView) findViewById(R.id.btn_soundSwitch);
+		btnSoundSwitch = (FrameLayout) findViewById(R.id.btn_soundSwitch);
 		btnSoundSwitch.setOnTouchListener(new MyOnTouchListener());
 
 		linear_padding = (LinearLayout) findViewById(R.id.linear_padding);
