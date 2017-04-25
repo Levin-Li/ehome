@@ -82,6 +82,7 @@
                  android:layout_width="match_parent"
                  android:layout_height="wrap_content"
                  android:layout_marginTop="2dp"
+                 android:visibility="gone"
                  android:background="@color/white"
                  >
                 <TextView
@@ -199,6 +200,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="1dp"
+                android:visibility="gone"
                 android:background="@color/white">
 
                 <TextView
@@ -287,7 +289,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_toRightOf="@id/history_call_textview"
-                    android:text="门锁绑定"
+                    android:text="报警记录"
                     android:textColor="@color/black" />
 
                 <ImageView
@@ -304,6 +306,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
+                android:visibility="gone"
                 android:background="@color/white">
 
                 <TextView

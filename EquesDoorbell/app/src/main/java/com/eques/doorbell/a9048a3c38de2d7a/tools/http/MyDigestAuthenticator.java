@@ -26,9 +26,13 @@ public class MyDigestAuthenticator extends DigestAuthenticator {
 
     public synchronized Request authenticate(Route route, Response response) throws IOException {
         Request req = super.authenticate(route, response);
-        String authenStr = req.header("Authorization");
+        String authenStr = "";
+        if(req != null) {
+            authenStr = req.header("Authorization");
+        }
         if(StringUtil.isEmpty(authenStr)) {
-            throw new IOException("Parent DigestAuthenticator did not generator WWW_AUTH_RESP header");
+            return null;
+//           throw new IOException("Parent DigestAuthenticator did not generator WWW_AUTH_RESP header");
         } else {
             Matcher m = QOP_REGEX.matcher(authenStr);
 

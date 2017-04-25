@@ -3,6 +3,7 @@ package com.eques.doorbell.a9048a3c38de2d7a.modules;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 
 import com.alibaba.fastjson.JSONObject;
 import com.eques.doorbell.a9048a3c38de2d7a.tools.JSONBuilder;
@@ -109,7 +110,7 @@ public class HandleReceiver extends BroadcastReceiver {
     public static final String EXTRA_JPUSH_APPKEY_BUS = "jpush_appkey_bus";
     
     public static final String EXTRA_JPUSH_MASTER_SECRET_BUS = "jpush_master_secret_bus";
-	
+	PreferenceManager preferenceManager = PreferenceManager.getInstance();
 	private Logger logger = LoggerFactory.getLogger(HandleReceiver.class);
 	@Override
 	public void onReceive(Context context, final Intent intent) {
@@ -122,26 +123,48 @@ public class HandleReceiver extends BroadcastReceiver {
 				@Override
 				public void run() {
 					//根据不同的消息类型，获取不同的参数
-					int method = intent.getIntExtra(EXTRA_METHOD, 0);
-					String devid = intent.getStringExtra(EXTRA_DEVID);
-					int upload = intent.getIntExtra(EXTRA_UPLOAD, 0);
-					int type = intent.getIntExtra(EXTRA_TYPE, 0);
-					String fid = intent.getStringExtra(EXTRA_FID);
-					String username = PreferenceManager.getInstance().getGlobalPreference().getString("username","");
-					if(1==method || 2==method){
-						String alertDesc = "";
-						if(2==method){
-							alertDesc ="门铃检测到报警";
+					try {
+						Bundle bundle = intent.getExtras();
+						int method = intent.getIntExtra(EXTRA_METHOD, 0);
+						String devid = "";
+						int upload = 0;
+						int type = 0;
+						String fid = "";
+						String username = "";
+						if(bundle.containsKey(EXTRA_UPLOAD)) {
+							upload = intent.getIntExtra(EXTRA_UPLOAD, 0);
 						}
-						JSONObject jsonObject = new JSONBuilder().put("cmd","ALARM").put("devType","CMMY02").put("username",username).put("devId",devid).put("alertTime",System.currentTimeMillis()/1000+"").put("alertType",method+"")
-								.put("alertDesc",alertDesc).put("ext",new JSONBuilder().put("upload",upload+"").put("type",type+"").put("fid",fid).build()).build();
-						Map<String,String> header = new HashMap<String,String>();
-						header.put("cmd","ALARM");
-						JSONObject result = HttpManager.getWulianCloudProvider().post(BASEURL+"/OMS/device/alert",header,jsonObject.toString());
-						logger.debug("response:"+result.toString());
+						if(bundle.containsKey(EXTRA_TYPE)) {
+							type = intent.getIntExtra(EXTRA_TYPE, 0);
+						}
+						if(bundle.containsKey(EXTRA_FID)) {
+							fid = intent.getStringExtra(EXTRA_FID);
+						}
+						if(preferenceManager.getGlobalPreference() != null){
+							username = preferenceManager.getGlobalPreference().getString("username", "");
+							devid = preferenceManager.getGlobalPreference().getString("bid", "");
+						}
+						if (1 == method || 2 == method) {
+							String alertDesc = "";
+							if (1 == method) {
+								alertDesc = "可视门铃检测到有人在门外";
+							}else if (2 == method) {
+								alertDesc = "可视门铃检测到有人按门铃";
+							}
+							JSONObject jsonObject = new JSONBuilder().put("cmd", "ALARM").put("devType", "CMMY02").put("user", username).put("devId", devid).put("alertTime", System.currentTimeMillis() / 1000 + "").put("alertType", method + "")
+									.put("alertDesc", alertDesc).put("ext", new JSONBuilder().put("upload", upload + "").put("type", type + "").put("fid", fid).build()).build();
+							Map<String, String> header = new HashMap<String, String>();
+							header.put("cmd", "ALARM");
+							JSONObject result = HttpManager.getWulianCloudProvider().post(BASEURL + "/OMS/device/alert", header, jsonObject.toString());
+//							JSONObject result = HttpManager.getWulianCloudProvider().post(BASEURL + "/device/oms/alert", header, jsonObject.toString());
+							logger.debug("alarm request:"+jsonObject.toString()+";alrm response:" + result.toString());
+						}
+						logger.debug(" method: " + method +" username: " + username+ ", devid: " + devid + ", upload: " + upload +
+								",type: " + type + ", fid: " + fid);
+					}catch (Exception e ){
+						e.printStackTrace();
+						logger.debug("method : error");
 					}
-					logger.debug( "method: " + method + "\t devid: " + devid + "\t upload: " + upload +
-							"\t type: " + type + "\t fid: " + fid);
 				}
 			});
 
@@ -157,17 +180,21 @@ public class HandleReceiver extends BroadcastReceiver {
 			context.sendBroadcast(in);
 			
 		} else if (ACTION_EQUES_PING.equals(action)) {
-		    
+
 		} else if (ACTION_EQUES_LOGIN_INFO.equals(action)) {
-		    String userName = intent.getStringExtra(EXTRA_USERNAME);
-		    String bid = intent.getStringExtra(EXTRA_DEVBID);
-			logger.debug( "userName: " + userName + "\t bid: " + bid);
-			PreferenceManager.getInstance().getGlobalPreference().putString("username",userName);
-			PreferenceManager.getInstance().getGlobalPreference().putString("bid",bid);
+			try {
+				String userName = intent.getStringExtra(EXTRA_USERNAME);
+				String bid = intent.getStringExtra(EXTRA_DEVBID);
+				logger.debug("userName: " + userName + "\t bid: " + bid);
+				if(preferenceManager.getGlobalPreference() != null){
+					preferenceManager.getGlobalPreference().putString("username", userName);
+					preferenceManager.getGlobalPreference().putString("bid", bid);
+				}
+			}catch (Exception e){
+				e.printStackTrace();
+			}
 		} else {
 			logger.debug( "error action");
 		}
 	}
-	
-	
 }
