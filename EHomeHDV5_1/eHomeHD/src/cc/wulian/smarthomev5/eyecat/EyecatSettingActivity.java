@@ -56,6 +56,7 @@ public class EyecatSettingActivity extends Activity {
         EyecatManager.getInstance().addPacketListener(deviceDetailListener);
         EyecatManager.getInstance().addPacketListener(hummanListener);
         EyecatManager.getInstance().addPacketListener(doorbellLightListener);
+        EyecatManager.getInstance().addPacketListener(deviceRemoveListener);
     }
 
     @Override
@@ -64,6 +65,7 @@ public class EyecatSettingActivity extends Activity {
         EyecatManager.getInstance().removePacketListener(deviceDetailListener);
         EyecatManager.getInstance().removePacketListener(hummanListener);
         EyecatManager.getInstance().removePacketListener(doorbellLightListener);
+        EyecatManager.getInstance().removePacketListener(deviceRemoveListener);
     }
 
     private void initView(){
@@ -206,10 +208,7 @@ public class EyecatSettingActivity extends Activity {
                 builder.setListener(new WLDialog.MessageListener() {
                     @Override
                     public void onClickPositive(View contentViewLayout) {
-                        DevicesUserManage.unBindDevice(bid);
                         EyecatManager.getInstance().getICVSSUserInstance().equesDelDevice(bid);
-                        JsUtil.getInstance().execCallback(SmarthomeFeatureImpl.pWebview, SmarthomeFeatureImpl.callbackid,"0", JsUtil.OK, false);
-                        finish();
                     }
 
                     @Override
@@ -363,6 +362,35 @@ public class EyecatSettingActivity extends Activity {
                     }
                 }
             });
+        }
+    };
+    private EyecatManager.PacketListener deviceRemoveListener = new EyecatManager.PacketListener() {
+        @Override
+        public String getMenthod() {
+            return Method.METHOD_RMBDY_RESULT;
+        }
+
+        @Override
+        public void processPacket(final JSONObject object) {
+            final String bid = object.optString(Method.ATTR_BUDDY_BID);
+            String code = object.optString(Method.ATTR_ERROR_CODE);
+            if("4000".equals(code)){
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        DevicesUserManage.unBindDevice(bid);
+                        JsUtil.getInstance().execCallback(SmarthomeFeatureImpl.pWebview, SmarthomeFeatureImpl.callbackid,"0", JsUtil.OK, false);
+                        finish();
+                    }
+                });
+            }else{
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                      Toast.makeText(EyecatSettingActivity.this,"解绑设备失败",Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
         }
     };
 }

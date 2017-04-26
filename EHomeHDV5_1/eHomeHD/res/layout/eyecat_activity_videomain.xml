@@ -151,13 +151,13 @@
                     />
             </FrameLayout>
             <FrameLayout
-                android:id="@+id/btn_soundSwitch"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="top"
                 android:layout_marginTop="10dp"
                 android:layout_weight="1">
                 <ImageView
+                    android:id="@+id/btn_soundSwitch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/icon_talkback"

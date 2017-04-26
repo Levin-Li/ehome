@@ -54,7 +54,8 @@ public class EyecatVideoCallActivity extends Activity {
 	private boolean isExit = false;
 	private AudioManager audioManager;
 	private LinearLayout linear_padding;
-	private FrameLayout btnCapture, btnMute, btnHangupCall,btnSoundSwitch;
+	private FrameLayout btnCapture, btnMute, btnHangupCall;
+	private ImageView btnSoundSwitch;
 	private Handler handler = new Handler(Looper.getMainLooper());
 	private ImageView iv_mute,levelone,leveltwo,levelthree,levelfour,levelfive;
 	private TextView battery_status_title;
@@ -155,7 +156,7 @@ public class EyecatVideoCallActivity extends Activity {
 		btnHangupCall = (FrameLayout) findViewById(R.id.btn_hangupCall);
 		btnHangupCall.setOnClickListener(new MyOnClickListener());
 
-		btnSoundSwitch = (FrameLayout) findViewById(R.id.btn_soundSwitch);
+		btnSoundSwitch = (ImageView) findViewById(R.id.btn_soundSwitch);
 		btnSoundSwitch.setOnTouchListener(new MyOnTouchListener());
 
 		linear_padding = (LinearLayout) findViewById(R.id.linear_padding);
@@ -263,12 +264,14 @@ public class EyecatVideoCallActivity extends Activity {
 	}
 	private void callSpeakerSetting(boolean f) {
 		if (f) {
+			btnSoundSwitch.setImageResource(R.drawable.icon_talkback_green);
 			if (callId != null) {
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioRecordEnable(true, callId);
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioPlayEnable(false, callId);
 			}
 			closeSpeaker();
 		} else {
+			btnSoundSwitch.setImageResource(R.drawable.icon_talkback);
 			if (callId != null) {
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioPlayEnable(true, callId);
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioRecordEnable(false, callId);
@@ -566,7 +569,7 @@ public class EyecatVideoCallActivity extends Activity {
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioPlayEnable(false, callId);
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioRecordEnable(false, callId);
 			}
-			iv_mute.setImageResource(R.drawable.icon_suspend);
+			iv_mute.setImageResource(R.drawable.icon_silence);
 
 			
 		}else{

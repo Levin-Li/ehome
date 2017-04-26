@@ -220,10 +220,13 @@ public class EyecatManager {
 
         @Override
         public void processPacket(JSONObject object) {
-            String bid = object.optString(Method.ATTR_BUDDY_BID);
-            EyecatManager.EyecatDevice device = new EyecatManager.EyecatDevice();
-            device.setBid(bid);
-            EyecatManager.getInstance().removeDevice(device);
+            JSONObject removeBdy = object.optJSONObject(Method.ATTR_REMOVED_BDY);
+            if(removeBdy != null) {
+                String bid = object.optString(Method.ATTR_BUDDY_BID);
+                EyecatManager.EyecatDevice device = new EyecatManager.EyecatDevice();
+                device.setBid(bid);
+                EyecatManager.getInstance().removeDevice(device);
+            }
         }
     };
 }
