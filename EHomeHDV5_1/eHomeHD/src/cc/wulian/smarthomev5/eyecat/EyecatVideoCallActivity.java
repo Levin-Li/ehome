@@ -569,7 +569,7 @@ public class EyecatVideoCallActivity extends Activity {
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioPlayEnable(false, callId);
 				EyecatManager.getInstance().getICVSSUserInstance().equesAudioRecordEnable(false, callId);
 			}
-			iv_mute.setImageResource(R.drawable.icon_silence);
+			iv_mute.setImageResource(R.drawable.eyecat_silence);
 
 			
 		}else{

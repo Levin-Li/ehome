@@ -1,5 +1,6 @@
 package cc.wulian.smarthomev5.eyecat;
 
+import android.content.Intent;
 import android.util.Log;
 
 import com.eques.icvss.api.ICVSSListener;
@@ -95,6 +96,7 @@ public class EyecatManager {
             EyecatManager.getInstance().addPacketListener(deviceListResultListener);
             EyecatManager.getInstance().addPacketListener(devstResultListener);
             EyecatManager.getInstance().addPacketListener(removedResultListener);
+            EyecatManager.getInstance().addPacketListener(callListener);
             EyecatManager.getInstance().getICVSSUserInstance().equesLogin(MainApplication.getApplication(), DISTRIBUTE_URL,username,APPKEY);
         }
     }
@@ -226,6 +228,27 @@ public class EyecatManager {
                 EyecatManager.EyecatDevice device = new EyecatManager.EyecatDevice();
                 device.setBid(bid);
                 EyecatManager.getInstance().removeDevice(device);
+            }
+        }
+    };
+    private EyecatManager.PacketListener callListener  = new EyecatManager.PacketListener() {
+        @Override
+        public String getMenthod() {
+            return Method.METHOD_CALL;
+        }
+
+        @Override
+        public void processPacket(JSONObject object) {
+            final String bid =object.optString(Method.ATTR_FROM);
+            final String state =object.optString(Method.ATTR_ZIGBEE_STATE);
+            final String sid = object.optString(Method.ATTR_CALL_SID);
+            if("open".equals(state)){
+                Intent intent = new Intent();
+                intent.putExtra("bid",bid);
+                intent.setClassName(MainApplication.getApplication().getPackageName(),EyecatCallingActivity.class.getName());
+                intent.putExtra("sid",sid);
+                MainApplication.getApplication().startActivity(intent);
+
             }
         }
     };
