@@ -1,5 +1,11 @@
 <resources>
 <!-- generate by genlang3.py -->
+  <string name="xlistview_header_hint_normal">下拉刷新</string>
+  <string name="xlistview_header_hint_ready">松开刷新数据</string>
+  <string name="xlistview_header_hint_loading">正在加载...</string>
+  <string name="xlistview_header_last_time">上次更新时间：</string>
+  <string name="xlistview_footer_hint_normal">查看更多</string>
+  <string name="xlistview_footer_hint_ready">松开载入更多</string>
   <string name="lang_ver">V2016-7-14</string>
   <string name="login_no_network_hint">网络异常，请先检查网络连接</string>
   <string name="exit_software_hint">你确定要退出该软件？退出后将无法接收报警信息.</string>

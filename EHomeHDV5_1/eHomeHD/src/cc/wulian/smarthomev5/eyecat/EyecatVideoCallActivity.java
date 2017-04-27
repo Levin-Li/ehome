@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -34,6 +35,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -54,14 +56,15 @@ public class EyecatVideoCallActivity extends Activity {
 	private boolean isExit = false;
 	private AudioManager audioManager;
 	private LinearLayout linear_padding;
-	private FrameLayout btnCapture, btnMute, btnHangupCall;
+	private FrameLayout btnCapture, btnMute, btnHangupCall,chooseBar;
 	private ImageView btnSoundSwitch;
 	private Handler handler = new Handler(Looper.getMainLooper());
 	private ImageView iv_mute,levelone,leveltwo,levelthree,levelfour,levelfive;
 	private TextView battery_status_title;
 	int width = 640;
 	int height = 480;
-
+	MyHandler mHandler= new MyHandler(EyecatVideoCallActivity.this);
+	CountTimeThread countTimeThread;
 	private int screenWidthDip;
 	private int screenHeightDip;
 	private String bid;
@@ -80,11 +83,7 @@ public class EyecatVideoCallActivity extends Activity {
 		hasVideo = getIntent().getBooleanExtra(Method.ATTR_CALL_HASVIDEO, false);
 		bid = getIntent().getStringExtra("bid");
 		initUI();
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            linear_padding.setVisibility(View.GONE);
-        }else{
-            linear_padding.setVisibility(View.VISIBLE);
-        }
+
 	}
 	public void onBackPressed() {
 		hangUpCall();
@@ -106,10 +105,27 @@ public class EyecatVideoCallActivity extends Activity {
 		if (instance.isPortrait()) {
 
 			// 切换成竖屏
-			setContentView(R.layout.eyecat_activity_videomain);
+			linear_padding.setVisibility(View.VISIBLE);
+			chooseBar.setVisibility(View.VISIBLE);
 		} else {
+			startCountTimeThread();
 			// 切换成横屏
-			setContentView(R.layout.eyecat_activity_videomain_land);
+			linear_padding.setVisibility(View.GONE);
+			chooseBar.setVisibility(View.GONE);
+			surfaceView.setOnTouchListener(new OnTouchListener() {
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					countTimeThread.reset();
+					if (event.getAction() == MotionEvent.ACTION_DOWN) {
+						boolean isVisible = (chooseBar.getVisibility() ==View.VISIBLE);
+						if (!isVisible) {
+							chooseBar.setVisibility(View.VISIBLE);
+							return true;
+						}
+					}
+					return false;
+				}
+			});
 		}
 	}
 	@Override
@@ -162,7 +178,7 @@ public class EyecatVideoCallActivity extends Activity {
 
 		linear_padding = (LinearLayout) findViewById(R.id.linear_padding);
 		iv_mute = (ImageView) findViewById(R.id.iv_mute);
-		RelativeLayout relative_videocall = (RelativeLayout) findViewById(R.id.relative_videocall);
+		FrameLayout relative_videocall = (FrameLayout) findViewById(R.id.relative_videocall);
 		relative_videocall.setOnClickListener(new MyOnClickListener());
 		battery_status_title = (TextView) findViewById(R.id.battery_status_title);
 		levelone = (ImageView) findViewById(R.id.level_one);
@@ -170,7 +186,7 @@ public class EyecatVideoCallActivity extends Activity {
 		levelthree = (ImageView) findViewById(R.id.level_three);
 		levelfour = (ImageView) findViewById(R.id.level_four);
 		levelfive = (ImageView) findViewById(R.id.level_five);
-
+		chooseBar = (FrameLayout) findViewById(R.id.choose_bar);
 	}
 	void showVideo(){
 		int count = 0;
@@ -606,6 +622,106 @@ public class EyecatVideoCallActivity extends Activity {
 		return file.mkdirs();
 
 	}
-	
-	
+	/**
+	 * 开启监听控件隐藏的线程
+	 */
+	private void startCountTimeThread(){
+		countTimeThread = new CountTimeThread(10);
+		countTimeThread.start();
+	}
+
+	/**
+	 * 隐藏需要隐藏的按钮
+	 */
+	private void hide(){
+		if (chooseBar.getVisibility() == View.VISIBLE) {
+			chooseBar.setVisibility(View.GONE);
+		}
+	}
+
+	/**
+	 * Handler消息传递机制
+	 */
+	class MyHandler extends Handler{
+		//发送消息的id
+		private final int MSG_HIDE= 0x001;
+		//WeakReference垃圾回收机制
+		private WeakReference<EyecatVideoCallActivity> weakRef;
+		public MyHandler(EyecatVideoCallActivity pMainActivity){
+			weakRef = new WeakReference<EyecatVideoCallActivity>(pMainActivity);
+		}
+
+		@Override
+		public void handleMessage(Message msg) {
+			final EyecatVideoCallActivity mainActivity = weakRef.get();
+
+			if (mainActivity != null) {
+				switch (msg.what) {
+					case MSG_HIDE:
+						mainActivity.hide();
+						break;
+
+				}
+			}
+			super.handleMessage(msg);
+		}
+
+		/**
+		 * 发送消息
+		 */
+	public void sendHideControllMessage(){
+		obtainMessage(MSG_HIDE).sendToTarget();
+	}
+
+}
+
+
+/**
+ * 用进程监听按钮控件的显示时间，定时隐藏
+ * @author zxl
+ *
+ */
+private class CountTimeThread extends Thread{
+private final long maxVisibleTime;
+private long startVisibleTime;
+
+/**
+ * 设置控件显示时间 second单位是秒
+ * @param second
+ */
+public CountTimeThread(int second){
+		maxVisibleTime = second * 1000;//换算为毫秒
+
+		setDaemon(true);//设置为后台进程
+		}
+
+/**
+ * 如果用户有操作，则重新开始计时隐藏时间
+ */
+private synchronized void reset() {
+		startVisibleTime = System.currentTimeMillis();
+		}
+
+@Override
+public void run() {
+		startVisibleTime = System.currentTimeMillis();//初始化开始时间
+
+		while (true) {
+		//如果时间达到最大时间，则发送隐藏消息
+		if (startVisibleTime + maxVisibleTime < System.currentTimeMillis()){
+		mHandler.sendHideControllMessage();
+
+		startVisibleTime = System.currentTimeMillis();
+		}
+
+		try {
+		Thread.sleep(1000);
+		}catch(Exception e) {
+
+		}
+		}
+
+		}
+		}
+
 }
