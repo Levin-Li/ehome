@@ -5,5 +5,55 @@
     android:orientation="vertical"
     android:background="@drawable/main_background_v5"
     >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="@color/action_bar_bg">
 
+        <TextView
+            android:id="@+id/eyecat_title_main"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="设置"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/eyecat_return"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="17dp"
+            android:text="返回"
+            android:drawableLeft="@drawable/icon_back"
+            android:textColor="@color/action_bar_bg"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="17dp" />
+        <TextView
+            android:id="@+id/eyecat_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="17dp"
+            android:text="编辑"
+            android:textColor="@color/white"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="17dp" />
+    </RelativeLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <cc.wulian.smarthomev5.view.XListView.XListView
+            android:id="@+id/lv_warnning"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:divider="#00000000"
+            android:dividerHeight="8dp"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp" />
+    </FrameLayout>
 </LinearLayout>
