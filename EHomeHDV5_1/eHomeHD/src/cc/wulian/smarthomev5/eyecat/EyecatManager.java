@@ -79,13 +79,14 @@ public class EyecatManager {
         }
     };
     public ICVSSUserInstance icvss = ICVSSUserModule.getInstance(listener).getIcvss();
-    public static String username = null;
-    static{
+    public static String getUserName(){
+        String username = null;
         String userId = SmarthomeFeatureImpl.getData(SmarthomeFeatureImpl.Constants.USERID);
         String endPrexix = MD5Util.encrypt(userId+"_$LKl1as34d5fc");
         endPrexix = endPrexix.substring(endPrexix.length()-10);
         username = userId+"_"+endPrexix;
-        Log.i("ykang_username:",username);
+        Log.i("eyecat: username is",username);
+        return username;
     }
     public static EyecatManager getInstance(){
         return instance;
@@ -97,7 +98,7 @@ public class EyecatManager {
             EyecatManager.getInstance().addPacketListener(devstResultListener);
             EyecatManager.getInstance().addPacketListener(removedResultListener);
             EyecatManager.getInstance().addPacketListener(callListener);
-            EyecatManager.getInstance().getICVSSUserInstance().equesLogin(MainApplication.getApplication(), DISTRIBUTE_URL,username,APPKEY);
+            EyecatManager.getInstance().getICVSSUserInstance().equesLogin(MainApplication.getApplication(), DISTRIBUTE_URL,getUserName(),APPKEY);
         }
     }
     public ICVSSUserInstance getICVSSUserInstance(){

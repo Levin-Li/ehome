@@ -16,10 +16,12 @@ import android.widget.Toast;
 
 import com.eques.icvss.core.module.user.BuddyType;
 import com.eques.icvss.utils.Method;
+import com.yuantuo.customview.ui.WLDialog;
 
 import org.json.JSONObject;
 
 import cc.wulian.h5plus.common.JsUtil;
+import cc.wulian.ihome.wan.util.StringUtil;
 import cc.wulian.smarthomev5.R;
 import cc.wulian.smarthomev5.service.html5plus.plugins.SmarthomeFeatureImpl;
 
@@ -70,7 +72,7 @@ public class EyecatQRcodeActivity extends Activity implements View.OnClickListen
         password = intent.getStringExtra("pwd");
         WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
         wifiSsid = getWifiInfoSSid(wifiManager);
-        Bitmap bitmap = EyecatManager.getInstance().getICVSSUserInstance().equesCreateQrcode(wifiSsid, password, EyecatManager.KEYID, EyecatManager.username,
+        Bitmap bitmap = EyecatManager.getInstance().getICVSSUserInstance().equesCreateQrcode(wifiSsid, password, EyecatManager.KEYID, EyecatManager.getUserName(),
                 BuddyType.TYPE_WIFI_DOOR_R22, 230);
 
         eyecat_qrcode.setImageBitmap(bitmap);
@@ -128,6 +130,37 @@ public class EyecatQRcodeActivity extends Activity implements View.OnClickListen
         @Override
         public void processPacket(JSONObject object) {
             reqId = object.optString(Method.ATTR_REQID);
+            JSONObject extra = object.optJSONObject(Method.ATTR_EXTRA);
+            if(extra != null){
+                final String oldbdy = extra.optString(Method.ATTR_OLDBDY);
+                if(!StringUtil.isNullOrEmpty(oldbdy)){
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            WLDialog.Builder builder = new WLDialog.Builder(EyecatQRcodeActivity.this);
+                            builder.setTitle("提示");
+                            String str = "已绑定其他账号，请先解绑后再绑定。";
+//                            str = String.format(str,oldbdy);
+                            builder.setMessage(str);
+                            builder.setPositiveButton("取消操作");
+                            builder.setListener(new WLDialog.MessageListener() {
+                                @Override
+                                public void onClickPositive(View contentViewLayout) {
+                                    JsUtil.getInstance().execCallback(SmarthomeFeatureImpl.pWebview, SmarthomeFeatureImpl.callbackid,"1", JsUtil.OK, false);
+                                    finish();
+                                }
+
+                                @Override
+                                public void onClickNegative(View contentViewLayout) {
+
+                                }
+                            });
+                            builder.create().show();
+                        }
+                    });
+                    return ;
+                }
+            }
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
