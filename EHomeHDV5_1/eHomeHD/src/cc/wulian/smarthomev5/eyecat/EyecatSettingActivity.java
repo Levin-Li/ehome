@@ -33,7 +33,7 @@ import cc.wulian.smarthomev5.tools.DevicesUserManage;
  */
 
 public class EyecatSettingActivity extends Activity {
-    private RelativeLayout eyecat_setup_name,eyecat_wifi_setting,eyecatCallHistory,eyecatWarnHistory,eyecatPicture;
+    private RelativeLayout eyecat_setup_name,eyecat_wifi_setting,eyecatCallHistory,eyecatWarnHistory,eyecatPicture,eyecat_setup_info;
     private ToggleButton doorbelllight,human_detection_onoff;
     private TextView setup_name;
     private boolean humanChecked = false;
@@ -77,6 +77,8 @@ public class EyecatSettingActivity extends Activity {
                 finish();
             }
         });
+        eyecat_setup_info = (RelativeLayout) findViewById(R.id.eyecat_setup_info);
+        eyecat_setup_info.setOnClickListener(myOnClickListener);
         setup_name = (TextView) findViewById(R.id.setup_name);
         eyecat_setup_name = (RelativeLayout) findViewById(R.id.eyecat_setup_name);
         eyecat_setup_name.setOnClickListener(new View.OnClickListener() {
@@ -289,6 +291,17 @@ public class EyecatSettingActivity extends Activity {
 
         }
     }
+    private View.OnClickListener myOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()){
+                case R.id.eyecat_setup_info:
+                    Intent intent = new Intent(EyecatSettingActivity.this,EyecatSetupInfoActivity.class);
+                    startActivity(intent);
+                    break;
+            }
+        }
+    };
     private EyecatManager.PacketListener deviceDetailListener = new EyecatManager.PacketListener() {
         @Override
         public String getMenthod() {
@@ -391,6 +404,18 @@ public class EyecatSettingActivity extends Activity {
                     }
                 });
             }
+        }
+    };
+    private EyecatManager.PacketListener deviceNickListener = new EyecatManager.PacketListener() {
+
+        @Override
+        public String getMenthod() {
+            return Method.METHOD_BDYLIST;
+        }
+
+        @Override
+        public void processPacket(JSONObject object) {
+
         }
     };
 }
