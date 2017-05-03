@@ -186,6 +186,6 @@
         android:textSize="10sp"
         android:textColor="@color/action_bar_bg"
         android:id="@+id/eyecat_still_problem"
-        android:visibility="gone"
+
         />
 </LinearLayout>

@@ -1526,6 +1526,11 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@android:style/Theme.NoTitleBar"
             ></activity>
+        <activity android:name=".eyecat.EyecatHelpingActivity"
+            android:alwaysRetainTaskState="true"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@android:style/Theme.NoTitleBar"
+            ></activity>
         <!-- 百度推送 service  add syf -->
         <!-- push应用定义消息receiver声明 -->
         <receiver android:name=".receiver.baidu.BaiduPushMessageReceiver">

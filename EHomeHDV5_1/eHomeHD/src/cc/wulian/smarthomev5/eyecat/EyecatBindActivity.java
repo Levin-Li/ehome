@@ -45,6 +45,7 @@ public class EyecatBindActivity extends Activity implements View.OnClickListener
         eyecat_next = (Button) findViewById(R.id.eyecat_next);
         eyecat_next.setOnClickListener(this);
         eyecat_still_problem = (TextView) findViewById(R.id.eyecat_still_problem);
+        eyecat_still_problem.setOnClickListener(this);
         if(flag){
             eyecat_bind.setImageResource(R.drawable.eyecat_icon_succeed);
             eyecat_status_fail.setVisibility(View.INVISIBLE);
@@ -75,6 +76,11 @@ public class EyecatBindActivity extends Activity implements View.OnClickListener
                     startActivity(intent);
                     finish();
                 }
+                break;
+            case R.id.eyecat_still_problem:
+                Intent intent = new Intent(EyecatBindActivity.this,EyecatHelpingActivity.class);
+                startActivity(intent);
+
                 break;
         }
     }
