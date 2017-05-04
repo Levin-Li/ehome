@@ -118,7 +118,7 @@
             android:layout_gravity="bottom"
             android:background="#070707"
             android:orientation="horizontal"
-            android:layout_marginBottom="10dp"
+
 
             >
             <FrameLayout
