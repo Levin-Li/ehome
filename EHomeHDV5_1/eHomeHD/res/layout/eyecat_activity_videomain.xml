@@ -105,7 +105,7 @@
             android:layout_gravity="bottom"
             android:background="@color/black"
             android:orientation="horizontal"
-            android:layout_marginBottom="10dp"
+
 
             >
             <FrameLayout

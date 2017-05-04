@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,6 +16,7 @@ import com.alibaba.fastjson.JSON;
 import com.eques.icvss.utils.Method;
 import com.yuantuo.customview.ui.WLDialog;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import cc.wulian.h5plus.common.JsUtil;
@@ -38,9 +40,10 @@ public class EyecatSettingActivity extends Activity {
     private TextView setup_name;
     private boolean humanChecked = false;
     private boolean doorLightChecked = false;
-    private TextView eyecatBack,restartDeviceTextView,deleteEyeDeviceTextView;
+    private TextView eyecatBack,restartDeviceTextView,deleteEyeDeviceTextView,doorbellringsound_kind;
     private String bid;
     private String uid;
+    private LinearLayout doorbellringsound;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +56,7 @@ public class EyecatSettingActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        EyecatManager.getInstance().addPacketListener(deviceNickListener);
         EyecatManager.getInstance().addPacketListener(deviceDetailListener);
         EyecatManager.getInstance().addPacketListener(hummanListener);
         EyecatManager.getInstance().addPacketListener(doorbellLightListener);
@@ -66,6 +70,7 @@ public class EyecatSettingActivity extends Activity {
         EyecatManager.getInstance().removePacketListener(hummanListener);
         EyecatManager.getInstance().removePacketListener(doorbellLightListener);
         EyecatManager.getInstance().removePacketListener(deviceRemoveListener);
+        EyecatManager.getInstance().removePacketListener(deviceNickListener);
     }
 
     private void initView(){
@@ -221,6 +226,8 @@ public class EyecatSettingActivity extends Activity {
 
             }
         });
+        doorbellringsound = (LinearLayout) findViewById(R.id.doorbellringsound);
+        doorbellringsound_kind = (TextView) findViewById(R.id.doorbellringsound_kind);
     }
     private void initData(){
         EyecatManager.getInstance().login();
@@ -415,7 +422,10 @@ public class EyecatSettingActivity extends Activity {
 
         @Override
         public void processPacket(JSONObject object) {
-
+            JSONArray bdylist = object.optJSONArray("bdylist");
+            JSONObject bdy = bdylist.optJSONObject(0);
+            String nickname = bdy.optString("nick");
+            setup_name.setText(nickname);
         }
     };
 }

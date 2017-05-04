@@ -301,20 +301,18 @@
                     android:background="@color/white"
                     android:src="@drawable/icon_arrow_right" />
             </RelativeLayout>
-            <RelativeLayout
+            <LinearLayout
                 android:id="@+id/doorbellringsound"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:visibility="gone"
+                android:orientation="horizontal"
                 android:background="@color/white">
 
                 <TextView
                     android:id="@+id/doorbellringsound_textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
                     android:layout_margin="16dp"
                     android:drawableRight="@drawable/doorbellsound"
                     android:textColor="@color/black"
@@ -323,20 +321,28 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toRightOf="@id/doorbellringsound_textview"
+                    android:layout_gravity="center_vertical"
                     android:text="门铃声音"
                     android:textColor="@color/black" />
-
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    />
+                <TextView
+                    android:id="@+id/doorbellringsound_kind"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="@color/black" />
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
                     android:layout_margin="16dp"
                     android:background="@color/white"
                     android:src="@drawable/icon_arrow_right" />
-            </RelativeLayout>
+            </LinearLayout>
             <RelativeLayout
                 android:id="@+id/history_warn_relative"
                 android:layout_width="match_parent"
