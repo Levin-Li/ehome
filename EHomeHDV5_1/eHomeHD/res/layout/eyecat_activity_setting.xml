@@ -307,7 +307,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:orientation="horizontal"
-                android:background="@color/white">
+                android:background="@color/white"
+                android:visibility="gone"
+                >
 
                 <TextView
                     android:id="@+id/doorbellringsound_textview"

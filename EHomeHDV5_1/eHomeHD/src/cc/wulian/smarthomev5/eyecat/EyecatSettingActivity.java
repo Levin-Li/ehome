@@ -40,10 +40,10 @@ public class EyecatSettingActivity extends Activity {
     private TextView setup_name;
     private boolean humanChecked = false;
     private boolean doorLightChecked = false;
-    private TextView eyecatBack,restartDeviceTextView,deleteEyeDeviceTextView,doorbellringsound_kind;
+    private TextView eyecatBack,restartDeviceTextView,deleteEyeDeviceTextView;
     private String bid;
     private String uid;
-    private LinearLayout doorbellringsound;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -163,14 +163,27 @@ public class EyecatSettingActivity extends Activity {
         eyecatCallHistory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+//                long start = System.currentTimeMillis() - 1000 * 60 * 60 * 24;
+//                long end = System.currentTimeMillis();
+//                EyecatManager.getInstance().getICVSSUserInstance().equesGetAlarmMessageList(bid,start,end,100);
+//                EyecatManager.getInstance().addPacketListener(alarmListListener);
+                Intent intent = new Intent(EyecatSettingActivity.this,EyecatWarnningActivity.class);
+                intent.putExtra("bid",bid);
+                startActivity(intent);
             }
         });
         eyecatWarnHistory = (RelativeLayout) findViewById(R.id.history_warn_relative);
         eyecatWarnHistory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+//                long startTime = System.currentTimeMillis() - 1000 * 60 * 60
+//                        * 24;
+//                long endTime = System.currentTimeMillis();
+//                EyecatManager.getInstance().getICVSSUserInstance().equesGetRingRecordList(bid,startTime,endTime,100);
+//                EyecatManager.getInstance().addPacketListener(ringListListener);
+                Intent intent = new Intent(EyecatSettingActivity.this,EyecatRingRecondActivity.class);
+                intent.putExtra("bid",bid);
+                startActivity(intent);
             }
         });
         eyecatPicture = (RelativeLayout) findViewById(R.id.eyecat_image_info);
@@ -226,8 +239,7 @@ public class EyecatSettingActivity extends Activity {
 
             }
         });
-        doorbellringsound = (LinearLayout) findViewById(R.id.doorbellringsound);
-        doorbellringsound_kind = (TextView) findViewById(R.id.doorbellringsound_kind);
+
     }
     private void initData(){
         EyecatManager.getInstance().login();
@@ -421,11 +433,19 @@ public class EyecatSettingActivity extends Activity {
         }
 
         @Override
-        public void processPacket(JSONObject object) {
-            JSONArray bdylist = object.optJSONArray("bdylist");
-            JSONObject bdy = bdylist.optJSONObject(0);
-            String nickname = bdy.optString("nick");
-            setup_name.setText(nickname);
+        public void processPacket(final JSONObject object) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONArray bdylist = object.optJSONArray("bdylist");
+                    JSONObject bdy = bdylist.optJSONObject(0);
+                    String nickname = bdy.optString("nick");
+                    setup_name.setText(nickname);
+                }
+            });
+
         }
     };
+
+
 }

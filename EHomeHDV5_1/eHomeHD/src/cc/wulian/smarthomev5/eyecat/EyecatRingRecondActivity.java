@@ -14,19 +14,19 @@ import cc.wulian.smarthomev5.R;
  * Created by Administrator on 2017/4/28.
  */
 
-public class EyecatWarnningActivity extends Activity {
+public class EyecatRingRecondActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.eyecat_activity_warnning);
+        setContentView(R.layout.eyecat_activity_ringrecond);
 
     }
 
-    private EyecatManager.PacketListener alarmListListener = new EyecatManager.PacketListener() {
+    private EyecatManager.PacketListener ringListListener = new EyecatManager.PacketListener() {
 
         @Override
         public String getMenthod() {
-            return Method.METHOD_ALARM_ALMLIST;
+            return Method.METHOD_ALARM_RINGLIST;
         }
 
         @Override
@@ -34,7 +34,7 @@ public class EyecatWarnningActivity extends Activity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(EyecatWarnningActivity.this, ""+object.toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EyecatRingRecondActivity.this, ""+object.toString(), Toast.LENGTH_SHORT).show();
                 }
             });
 
