@@ -406,7 +406,7 @@ public class EyecatSettingActivity extends Activity {
         public void processPacket(final JSONObject object) {
             final String bid = object.optString(Method.ATTR_BUDDY_BID);
             String code = object.optString(Method.ATTR_ERROR_CODE);
-            if("4000".equals(code)){
+            if("4000".equals(code) || "4402".equals(code)){
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

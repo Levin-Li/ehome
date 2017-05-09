@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -21,9 +20,6 @@ import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,7 +31,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -47,7 +42,6 @@ public class EyecatVideoCallActivity extends Activity {
 	private SurfaceView surfaceView;
 	private String callId;
 	private int currVolume;
-	private int devType = 0;
 	private int current;
 	private boolean isMuteFlag;
 	private boolean hasVideo;
@@ -55,26 +49,21 @@ public class EyecatVideoCallActivity extends Activity {
 	private boolean isPlaying = false;
 	private boolean isExit = false;
 	private AudioManager audioManager;
-	private LinearLayout linear_padding;
-	private FrameLayout btnCapture, btnMute, btnHangupCall,chooseBar;
+	private FrameLayout operationFrameLayout;
+	private FrameLayout btnCapture, btnMute, btnHangupCall;
 	private ImageView btnSoundSwitch;
 	private Handler handler = new Handler(Looper.getMainLooper());
 	private ImageView iv_mute,levelone,leveltwo,levelthree,levelfour,levelfive;
 	private TextView battery_status_title;
-	int width = 640;
-	int height = 480;
-	MyHandler mHandler= new MyHandler(EyecatVideoCallActivity.this);
-	CountTimeThread countTimeThread;
 	private int screenWidthDip;
 	private int screenHeightDip;
 	private String bid;
 	private ScreenSwitchUtils instance;
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.i("eyecat:","onCreate");
 		instance = ScreenSwitchUtils.init(this.getApplicationContext());
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-		setContentView(R.layout.eyecat_activity_videomain);
-
 		audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		current = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
 		audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, current, 0);
@@ -92,45 +81,37 @@ public class EyecatVideoCallActivity extends Activity {
 	@Override
 	protected void onStart() {
 		super.onStart();
+		Log.i("eyecat:","onStart");
 		instance.start(this);
 	}
 	@Override
 	protected void onStop() {
 		super.onStop();
+		Log.i("eyecat:","onStop");
 		instance.stop();
 	}
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-		if (instance.isPortrait()) {
-
-			// 切换成竖屏
-			linear_padding.setVisibility(View.VISIBLE);
-			chooseBar.setVisibility(View.VISIBLE);
-		} else {
-			startCountTimeThread();
-			// 切换成横屏
-			linear_padding.setVisibility(View.GONE);
-			chooseBar.setVisibility(View.GONE);
-			surfaceView.setOnTouchListener(new OnTouchListener() {
-				@Override
-				public boolean onTouch(View v, MotionEvent event) {
-					countTimeThread.reset();
-					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						boolean isVisible = (chooseBar.getVisibility() ==View.VISIBLE);
-						if (!isVisible) {
-							chooseBar.setVisibility(View.VISIBLE);
-							return true;
-						}
-					}
-					return false;
-				}
-			});
-		}
+		handler.post(new Runnable() {
+			@Override
+			public void run() {
+				initUI();
+				setVideoSize();
+			}
+		});
+		handler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				startUpCall(uid);
+				setAudioMute(); //设置是否静音
+			}
+		},2000);
 	}
 	@Override
 	protected void onResume() {
 		super.onResume();
+		Log.i("eyecat:","onResume");
 		EyecatManager.getInstance().addPacketListener(videoCallListener);
 		EyecatManager.getInstance().addPacketListener(videoPlayingListener);
 		EyecatManager.getInstance().addPacketListener(batteryStatusListener);
@@ -147,6 +128,7 @@ public class EyecatVideoCallActivity extends Activity {
 	@Override
 	protected void onPause() {
 		super.onPause();
+		Log.i("eyecat:","onPause");
 		isExit = true;
 		EyecatManager.getInstance().removePacketListener(videoCallListener);
 		EyecatManager.getInstance().removePacketListener(videoPlayingListener);
@@ -157,13 +139,25 @@ public class EyecatVideoCallActivity extends Activity {
 	}
 	protected void onDestroy() {
 		super.onDestroy();
+		Log.i("eyecat:","onDestroy");
 		audioManager.setStreamMute(AudioManager.STREAM_MUSIC, false);
 		audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, current, 0);
 		closeSpeaker();
 	}
 	private void initUI() {
+		// 清空
+		if(surfaceView != null){
+			surfaceView.setVisibility(View.GONE);
+			surfaceView = null;
+		}
+		if (instance.isPortrait()) {
+			Log.i("eyecat:","竖屏,uid:"+uid);
+			setContentView(R.layout.eyecat_activity_videomain);
+		}else{
+			Log.i("eyecat:","横屏，uid:"+uid);
+			setContentView(R.layout.eyecat_activity_videomain_land);
+		}
 		surfaceView = (SurfaceView) findViewById(R.id.surface_view);
-
 		btnCapture = (FrameLayout) findViewById(R.id.btn_capture);
 		btnCapture.setOnClickListener(new MyOnClickListener());
 
@@ -175,18 +169,46 @@ public class EyecatVideoCallActivity extends Activity {
 
 		btnSoundSwitch = (ImageView) findViewById(R.id.btn_soundSwitch);
 		btnSoundSwitch.setOnTouchListener(new MyOnTouchListener());
-
-		linear_padding = (LinearLayout) findViewById(R.id.linear_padding);
+		operationFrameLayout = (FrameLayout) findViewById(R.id.operations_framelayout);
 		iv_mute = (ImageView) findViewById(R.id.iv_mute);
-		FrameLayout relative_videocall = (FrameLayout) findViewById(R.id.relative_videocall);
-		relative_videocall.setOnClickListener(new MyOnClickListener());
 		battery_status_title = (TextView) findViewById(R.id.battery_status_title);
 		levelone = (ImageView) findViewById(R.id.level_one);
 		leveltwo = (ImageView) findViewById(R.id.level_two);
 		levelthree = (ImageView) findViewById(R.id.level_three);
 		levelfour = (ImageView) findViewById(R.id.level_four);
 		levelfive = (ImageView) findViewById(R.id.level_five);
-		chooseBar = (FrameLayout) findViewById(R.id.choose_bar);
+		surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
+
+			public void surfaceChanged(SurfaceHolder holder, int arg1,
+									   int arg2, int arg3) {
+			}
+
+			public void surfaceCreated(SurfaceHolder holder) {
+				Log.i("eyecat:","surfaceCreated");
+
+			}
+
+			public void surfaceDestroyed(SurfaceHolder holder) {
+				Log.i("eyecat:","surfaceDestroyed");
+				hangUpCallNotCloseActivity();
+			}
+		});
+		if (instance.isPortrait()) {
+			operationFrameLayout.setVisibility(View.VISIBLE);
+		}else{
+			operationFrameLayout.setVisibility(View.GONE);
+			surfaceView.setOnTouchListener(new OnTouchListener() {
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					if (event.getAction() == MotionEvent.ACTION_DOWN) {
+						showOPerations(5000);
+						return true;
+					}
+					return false;
+				}
+			});
+		}
+		EyecatManager.getInstance().getICVSSUserInstance().equesGetDeviceInfo(bid);
 	}
 	void showVideo(){
 		int count = 0;
@@ -228,7 +250,6 @@ public class EyecatVideoCallActivity extends Activity {
 			});
 		}else{
 			uid = device.getUid();
-			EyecatManager.getInstance().getICVSSUserInstance().equesGetDeviceInfo(bid);
 			runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
@@ -238,46 +259,12 @@ public class EyecatVideoCallActivity extends Activity {
 						openSpeaker();
 					}
 					setVideoSize();
-
-					LayoutParams layoutParams;
-					if(devType == BuddyType.TYPE_CAMERA_C01){
-						layoutParams = new LayoutParams(screenWidthDip, (screenWidthDip / 5));
-					}else{
-						layoutParams = new LayoutParams(screenWidthDip, (screenWidthDip / 7));
-					}
-//					if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//						linear_padding.setVisibility(View.GONE);
-//					}else{
-//						linear_padding.setLayoutParams(layoutParams);
-//					}
 					startUpCall(uid);
-//					if(hasVideo){ //是否显示视频
-//						callId = EyecatManager.getInstance().getICVSSUserInstance().equesOpenCall(uid, surfaceView.getHolder().getSurface()); //视频 + 语音通话
-//					}else{
-//						callId = EyecatManager.getInstance().getICVSSUserInstance().equesOpenCall(uid, surfaceView, null); //语音通话
-//					}
-					surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
-
-						public void surfaceChanged(SurfaceHolder holder, int arg1,
-												   int arg2, int arg3) {
-						}
-
-						public void surfaceCreated(SurfaceHolder holder) {
-							Log.i("eyecat:","surfaceCreated");
-
-						}
-
-						public void surfaceDestroyed(SurfaceHolder holder) {
-							Log.i("eyecat:","surfaceDestroyed");
-						}
-					});
+					setAudioMute(); //设置是否静音
 
 				}
 			});
 		}
-	}
-	private void showBatteryStatus(){
-
 	}
 	private void callSpeakerSetting(boolean f) {
 		if (f) {
@@ -302,35 +289,15 @@ public class EyecatVideoCallActivity extends Activity {
 		getWindowManager().getDefaultDisplay().getMetrics(dm);
 		screenWidthDip = dm.widthPixels;
 		screenHeightDip = dm.heightPixels;
-		
-		if(screenWidthDip == 1812){
-			screenWidthDip = 1920;
-		}
-		setAudioMute(); //设置是否静音
-		
-		if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-			Toast.makeText(this, screenHeightDip+"+"+screenWidthDip, Toast.LENGTH_SHORT).show();
-			surfaceView.getHolder().setFixedSize(screenHeightDip,screenWidthDip);
-		} else {
-			getVerticalPixel();
-		}
-	}
-
-	private void getVerticalPixel() {
-		int verticalHeight;
-		
-		if(devType == BuddyType.TYPE_CAMERA_C01){
-			verticalHeight = (screenWidthDip * 9) / 16;
-		
+		if (instance.isPortrait()) {
+			screenHeightDip = screenHeightDip/2;
+			Log.i("eyecat:",screenWidthDip+"*"+screenHeightDip +";sur:"+surfaceView.getMeasuredWidth()+"*"+surfaceView.getMeasuredHeight());
+			surfaceView.getHolder().setFixedSize(screenWidthDip, screenHeightDip);
 		}else{
-			verticalHeight = (screenWidthDip * 3) / 4;
+			Log.i("eyecat:",screenWidthDip+"*"+screenHeightDip+";sur:"+surfaceView.getMeasuredWidth()+"*"+surfaceView.getMeasuredHeight());
+			surfaceView.getHolder().setFixedSize(screenWidthDip,screenHeightDip);
 		}
-		surfaceView.getHolder().setFixedSize(screenWidthDip, verticalHeight);
 	}
-
-	long waitTime = 5000;  
-	long touchTime = 0;
-	
 	public String format(int i) {
 		String s = i + "";
 		if (s.length() == 1) {
@@ -348,7 +315,25 @@ public class EyecatVideoCallActivity extends Activity {
 			}
 		}
 	};
-
+	private Runnable runnableExecuteDelay = new Runnable() {
+		@Override
+		public void run() {
+			if(!instance.isPortrait()){
+				operationFrameLayout.setVisibility(View.GONE);
+			}
+		}
+	};
+	private void showOPerations(long time){
+		if(!instance.isPortrait()) {
+			if(operationFrameLayout.getVisibility() == View.VISIBLE){
+				operationFrameLayout.setVisibility(View.GONE);
+			}else {
+				operationFrameLayout.setVisibility(View.VISIBLE);
+				handler.removeCallbacks(runnableExecuteDelay);
+				handler.postDelayed(runnableExecuteDelay, time);
+			}
+		}
+	}
 	private EyecatManager.PacketListener videoCallListener= new EyecatManager.PacketListener() {
 		@Override
 		public String getMenthod() {
@@ -503,9 +488,6 @@ public class EyecatVideoCallActivity extends Activity {
 					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					String currentTime = format.format(new Date());
 					path = StringUtils.join(path, currentTime,".jpg");
-					if(devType == BuddyType.TYPE_CAMERA_C01){
-						height = 360;
-					}
 					EyecatManager.getInstance().getICVSSUserInstance().equesSnapCapture(BuddyType.TYPE_WIFI_DOOR_R22, path);
 					ELog.showToastLong(EyecatVideoCallActivity.this, "截图成功");
 				}else{
@@ -597,11 +579,19 @@ public class EyecatVideoCallActivity extends Activity {
 		}
 	}
 	private void startUpCall(String uid){
-		isPlaying = false;
+		if(isPlaying){
+			return ;
+		}
 		if(hasVideo){ //是否显示视频
 			callId = EyecatManager.getInstance().getICVSSUserInstance().equesOpenCall(uid, surfaceView.getHolder().getSurface()); //视频 + 语音通话
 		}else{
 			callId = EyecatManager.getInstance().getICVSSUserInstance().equesOpenCall(uid, surfaceView, null); //语音通话
+		}
+	}
+	private void hangUpCallNotCloseActivity(){
+		if (callId != null) {
+			EyecatManager.getInstance().getICVSSUserInstance().equesCloseCall(callId);
+			isPlaying = false;
 		}
 	}
 	private void hangUpCall(){
@@ -622,106 +612,5 @@ public class EyecatVideoCallActivity extends Activity {
 		return file.mkdirs();
 
 	}
-	/**
-	 * 开启监听控件隐藏的线程
-	 */
-	private void startCountTimeThread(){
-		countTimeThread = new CountTimeThread(10);
-		countTimeThread.start();
-	}
-
-	/**
-	 * 隐藏需要隐藏的按钮
-	 */
-	private void hide(){
-		if (chooseBar.getVisibility() == View.VISIBLE) {
-			chooseBar.setVisibility(View.GONE);
-		}
-	}
-
-	/**
-	 * Handler消息传递机制
-	 */
-	class MyHandler extends Handler{
-		//发送消息的id
-		private final int MSG_HIDE= 0x001;
-		//WeakReference垃圾回收机制
-		private WeakReference<EyecatVideoCallActivity> weakRef;
-		public MyHandler(EyecatVideoCallActivity pMainActivity){
-			weakRef = new WeakReference<EyecatVideoCallActivity>(pMainActivity);
-		}
-
-		@Override
-		public void handleMessage(Message msg) {
-			final EyecatVideoCallActivity mainActivity = weakRef.get();
-
-			if (mainActivity != null) {
-				switch (msg.what) {
-					case MSG_HIDE:
-						mainActivity.hide();
-						break;
-
-				}
-			}
-			super.handleMessage(msg);
-		}
-
-		/**
-		 * 发送消息
-		 */
-	public void sendHideControllMessage(){
-		obtainMessage(MSG_HIDE).sendToTarget();
-	}
-
-}
-
-
-/**
- * 用进程监听按钮控件的显示时间，定时隐藏
- * @author zxl
- *
- */
-private class CountTimeThread extends Thread{
-private final long maxVisibleTime;
-private long startVisibleTime;
-
-/**
- * 设置控件显示时间 second单位是秒
- * @param second
- */
-public CountTimeThread(int second){
-		maxVisibleTime = second * 1000;//换算为毫秒
-
-		setDaemon(true);//设置为后台进程
-		}
-
-/**
- * 如果用户有操作，则重新开始计时隐藏时间
- */
-private synchronized void reset() {
-		startVisibleTime = System.currentTimeMillis();
-		}
-
-@Override
-public void run() {
-		startVisibleTime = System.currentTimeMillis();//初始化开始时间
-
-		while (true) {
-		//如果时间达到最大时间，则发送隐藏消息
-		if (startVisibleTime + maxVisibleTime < System.currentTimeMillis()){
-		mHandler.sendHideControllMessage();
-
-		startVisibleTime = System.currentTimeMillis();
-		}
-
-		try {
-		Thread.sleep(1000);
-		}catch(Exception e) {
-
-		}
-		}
-
-		}
-		}
 
 }
