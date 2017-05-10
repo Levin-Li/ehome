@@ -43,7 +43,7 @@ public class EyecatSettingActivity extends Activity {
     private TextView eyecatBack,restartDeviceTextView,deleteEyeDeviceTextView,doorbellringsound_kind;
     private String bid;
     private String uid;
-    private LinearLayout doorbellringsound;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -163,6 +163,7 @@ public class EyecatSettingActivity extends Activity {
         eyecatCallHistory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                
 
             }
         });
@@ -226,8 +227,8 @@ public class EyecatSettingActivity extends Activity {
 
             }
         });
-        doorbellringsound = (LinearLayout) findViewById(R.id.doorbellringsound);
-        doorbellringsound_kind = (TextView) findViewById(R.id.doorbellringsound_kind);
+
+        
     }
     private void initData(){
         EyecatManager.getInstance().login();
@@ -428,4 +429,5 @@ public class EyecatSettingActivity extends Activity {
             setup_name.setText(nickname);
         }
     };
+
 }
