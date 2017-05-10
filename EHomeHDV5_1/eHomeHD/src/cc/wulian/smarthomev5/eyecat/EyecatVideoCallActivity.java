@@ -208,6 +208,7 @@ public class EyecatVideoCallActivity extends Activity {
 				}
 			});
 		}
+		EyecatManager.getInstance().getICVSSUserInstance().equesGetDeviceInfo(bid);
 	}
 	void showVideo(){
 		int count = 0;
@@ -249,7 +250,6 @@ public class EyecatVideoCallActivity extends Activity {
 			});
 		}else{
 			uid = device.getUid();
-			EyecatManager.getInstance().getICVSSUserInstance().equesGetDeviceInfo(bid);
 			runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
@@ -265,9 +265,6 @@ public class EyecatVideoCallActivity extends Activity {
 				}
 			});
 		}
-	}
-	private void showBatteryStatus(){
-
 	}
 	private void callSpeakerSetting(boolean f) {
 		if (f) {

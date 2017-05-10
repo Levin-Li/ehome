@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import cc.wulian.ihome.wan.util.MD5Util;
+import cc.wulian.ihome.wan.util.StringUtil;
 import cc.wulian.smarthomev5.activity.MainApplication;
 import cc.wulian.smarthomev5.service.html5plus.plugins.SmarthomeFeatureImpl;
 
@@ -29,6 +30,7 @@ public class EyecatManager {
     public static final String APPKEY = "FNXiNhNZnRar5QbAWYJ2QX4PNfdkwNNP";
     public static final String KEYID = "a9048a3c38de2d7a";
     private volatile boolean isLogined = false;
+    private volatile String loginedUsername = "";
     private static EyecatManager instance = new EyecatManager();
     private Map<String,List<PacketListener>> listeners = new HashMap<String,List<PacketListener>>();
     private Map<String,EyecatDevice> devicesMap = new HashMap<String,EyecatDevice>();
@@ -92,6 +94,12 @@ public class EyecatManager {
         return instance;
     }
     public void login(){
+        if(isLogined){
+            if(!StringUtil.equals(loginedUsername,getUserName())){
+                EyecatManager.getInstance().getICVSSUserInstance().equesUserLogOut();
+                isLogined = false;
+            }
+        }
         if(!isLogined){
             EyecatManager.getInstance().addPacketListener(loginPacketListener);
             EyecatManager.getInstance().addPacketListener(deviceListResultListener);
@@ -99,6 +107,7 @@ public class EyecatManager {
             EyecatManager.getInstance().addPacketListener(removedResultListener);
             EyecatManager.getInstance().addPacketListener(callListener);
             EyecatManager.getInstance().getICVSSUserInstance().equesLogin(MainApplication.getApplication(), DISTRIBUTE_URL,getUserName(),APPKEY);
+            loginedUsername = getUserName();
         }
     }
     public ICVSSUserInstance getICVSSUserInstance(){
