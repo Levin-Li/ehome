@@ -254,6 +254,7 @@ public class EyecatManager {
             final String sid = object.optString(Method.ATTR_CALL_SID);
             if("open".equals(state)){
                 Intent intent = new Intent();
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra("bid",bid);
                 intent.setClassName(MainApplication.getApplication().getPackageName(),EyecatCallingActivity.class.getName());
                 intent.putExtra("sid",sid);

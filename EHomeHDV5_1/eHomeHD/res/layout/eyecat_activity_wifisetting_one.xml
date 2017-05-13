@@ -112,7 +112,7 @@
         android:gravity="center"
         android:layout_marginTop="90px"
         android:text="请确保本手机已连接到WIFI"
-        android:textSize="32px"
+        android:textSize="20sp"
         android:textColor="#A9A9A9"
         />
     <Button

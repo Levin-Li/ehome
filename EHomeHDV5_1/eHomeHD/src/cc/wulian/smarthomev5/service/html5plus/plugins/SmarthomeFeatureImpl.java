@@ -81,6 +81,7 @@ import cc.wulian.smarthomev5.entity.haixin.CloudRequest;
 import cc.wulian.smarthomev5.entity.haixin.DeviceWifiSet;
 import cc.wulian.smarthomev5.entity.uei.UEIEntity;
 import cc.wulian.smarthomev5.entity.uei.UEIEntityManager;
+import cc.wulian.smarthomev5.eyecat.EyecatManager;
 import cc.wulian.smarthomev5.eyecat.EyecatSettingActivity;
 import cc.wulian.smarthomev5.eyecat.EyecatVideoCallActivity;
 import cc.wulian.smarthomev5.eyecat.EyecatWIFISettingOneActivity;
@@ -2094,6 +2095,10 @@ public class SmarthomeFeatureImpl {
         intent.putExtra("hasVideo", true);
         Activity thisActivity = (Activity) pWebview.getContainer();
         thisActivity.startActivity(intent);
+    }
+    @JavascriptInterface
+    public void loginEyeCatYiKang(final H5PlusWebView pWebview, final String webparam) {
+        EyecatManager.getInstance().login();
     }
     @JavascriptInterface
     public void goToSetEyeCatYiKang(final H5PlusWebView pWebview, final String webparam) {
