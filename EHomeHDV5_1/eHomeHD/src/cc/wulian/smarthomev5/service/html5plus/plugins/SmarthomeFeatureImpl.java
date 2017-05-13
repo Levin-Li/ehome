@@ -2098,7 +2098,13 @@ public class SmarthomeFeatureImpl {
     }
     @JavascriptInterface
     public void loginEyeCatYiKang(final H5PlusWebView pWebview, final String webparam) {
-        EyecatManager.getInstance().login();
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                EyecatManager.getInstance().login();
+            }
+        });
+
     }
     @JavascriptInterface
     public void goToSetEyeCatYiKang(final H5PlusWebView pWebview, final String webparam) {
