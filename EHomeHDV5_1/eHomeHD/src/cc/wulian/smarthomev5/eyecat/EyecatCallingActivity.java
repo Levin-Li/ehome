@@ -161,6 +161,7 @@ public class EyecatCallingActivity extends Activity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        stopAlarm();
                         finish();
                     }
                 });
