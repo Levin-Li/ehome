@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.eques.icvss.utils.Method;
 
@@ -23,9 +24,17 @@ public class EyecatSetupInfoActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.eyecat_activity_setup_info);
         uid = getIntent().getStringExtra("uid");
+        Toast.makeText(this, uid, Toast.LENGTH_SHORT).show();
         initView();
         initData();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        EyecatManager.getInstance().addPacketListener(deviceInfoListern);
+    }
+
     private void initView(){
         eyecat_return = (TextView) findViewById(R.id.eyecat_return);
         eyecat_return.setOnClickListener(new View.OnClickListener() {
