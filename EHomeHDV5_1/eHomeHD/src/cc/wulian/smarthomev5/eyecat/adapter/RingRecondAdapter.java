@@ -12,6 +12,9 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import cc.wulian.smarthomev5.R;
@@ -63,8 +66,9 @@ public class RingRecondAdapter extends BaseAdapter{
             holder = (ViewHolder) view.getTag();
         }
         URL url = EyecatManager.getInstance().getICVSSUserInstance().equesGetRingPicture(ringRecondinfo.getFid(),ringRecondinfo.getBid());
-
-        return null;
+        Picasso.with(context).load(url.toString()).into(holder.iv_warnning);
+        holder.tv_time.setText(getTime(ringRecondinfo.getRingtime()));
+        return view;
     }
 
     private static class ViewHolder {
@@ -72,5 +76,17 @@ public class RingRecondAdapter extends BaseAdapter{
         private ImageView iv_play;
         private TextView ringrecond_status;
         private TextView tv_time;
+    }
+    private String getTime(Long time){
+        SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        String d = format.format(time);
+        Date date = null;
+        try {
+            date=format.parse(d);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date.toString();
     }
 }

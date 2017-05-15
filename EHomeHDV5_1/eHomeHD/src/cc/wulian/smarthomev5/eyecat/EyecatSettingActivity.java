@@ -316,6 +316,7 @@ public class EyecatSettingActivity extends Activity {
             switch (v.getId()){
                 case R.id.eyecat_setup_info:
                     Intent intent = new Intent(EyecatSettingActivity.this,EyecatSetupInfoActivity.class);
+                    intent.putExtra("uid",uid);
                     startActivity(intent);
                     break;
             }

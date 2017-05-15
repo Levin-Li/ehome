@@ -49,7 +49,7 @@
             android:textSize="14sp" />
 
         <TextView
-
+            android:id="@+id/setup_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
@@ -78,6 +78,7 @@
             android:textSize="14sp" />
 
         <TextView
+            android:id="@+id/wifiname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
