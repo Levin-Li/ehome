@@ -165,6 +165,10 @@
         			var callbackID = plus.callbackUtil.getCallbackId(successCallback, errorCallback);
         			return B.exec(_BARCODE, "goToEyeCatYiKang", JSON.stringify([callbackID, param]));
         },
+        loginEyeCatYiKang: function(param, successCallback, errorCallback) {
+                			var callbackID = plus.callbackUtil.getCallbackId(successCallback, errorCallback);
+                			return B.exec(_BARCODE, "loginEyeCatYiKang", JSON.stringify([callbackID, param]));
+                },
 		sendUeiCommand: function(param, successCallback, errorCallback) {
 			var callbackID = plus.callbackUtil.getCallbackId(successCallback, errorCallback);
 			return B.exec(_BARCODE, "sendUeiCommand", JSON.stringify([callbackID, param]));

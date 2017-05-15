@@ -8,7 +8,8 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/eyecat_icon_succeed"
+        android:padding="15dp"
+        android:src="@drawable/eyecat_calling_default"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="50dp"
         android:id="@+id/eyecat_calling_device_image"
@@ -25,6 +26,7 @@
         android:textColor="@color/black"
         android:drawableLeft="@drawable/icon_silence"
         android:id="@+id/eyecat_calling_device_name"
+        android:visibility="gone"
         />
     <LinearLayout
         android:layout_width="match_parent"
