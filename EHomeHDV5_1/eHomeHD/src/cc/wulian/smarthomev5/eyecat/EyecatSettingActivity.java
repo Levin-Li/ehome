@@ -2,7 +2,9 @@ package cc.wulian.smarthomev5.eyecat;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -18,6 +20,8 @@ import com.yuantuo.customview.ui.WLDialog;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.io.File;
 
 import cc.wulian.h5plus.common.JsUtil;
 import cc.wulian.ihome.wan.core.http.Result;
@@ -83,7 +87,14 @@ public class EyecatSettingActivity extends Activity {
             }
         });
         eyecat_setup_info = (RelativeLayout) findViewById(R.id.eyecat_setup_info);
-        eyecat_setup_info.setOnClickListener(myOnClickListener);
+        eyecat_setup_info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(EyecatSettingActivity.this,EyecatSetupInfoActivity.class);
+                intent.putExtra("bid",bid);
+                startActivity(intent);
+            }
+        });
         setup_name = (TextView) findViewById(R.id.setup_name);
         eyecat_setup_name = (RelativeLayout) findViewById(R.id.eyecat_setup_name);
         eyecat_setup_name.setOnClickListener(new View.OnClickListener() {
@@ -185,9 +196,12 @@ public class EyecatSettingActivity extends Activity {
         eyecatPicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String picDir  = "/DingDong";
-                Intent intent = new Intent(EyecatSettingActivity.this,AlbumActivity.class);
-                intent.putExtra("picDir",picDir);
+//                String picDir  = "/DingDong";
+//                Intent intent = new Intent(EyecatSettingActivity.this,AlbumActivity.class);
+//                intent.putExtra("picDir",picDir);
+//                startActivity(intent);
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory().getAbsoluteFile()+"/DingDong")), "image/jpeg");
                 startActivity(intent);
             }
         });
@@ -308,18 +322,6 @@ public class EyecatSettingActivity extends Activity {
 
         }
     }
-    private View.OnClickListener myOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()){
-                case R.id.eyecat_setup_info:
-                    Intent intent = new Intent(EyecatSettingActivity.this,EyecatSetupInfoActivity.class);
-                    intent.putExtra("uid",uid);
-                    startActivity(intent);
-                    break;
-            }
-        }
-    };
     private EyecatManager.PacketListener deviceDetailListener = new EyecatManager.PacketListener() {
         @Override
         public String getMenthod() {

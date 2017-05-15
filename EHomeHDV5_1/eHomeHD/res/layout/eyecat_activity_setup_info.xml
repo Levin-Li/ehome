@@ -112,6 +112,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_margin="16dp"
+            android:id="@+id/version"
             android:text="1.2.78(最新)"
             android:background="@color/white"
             />

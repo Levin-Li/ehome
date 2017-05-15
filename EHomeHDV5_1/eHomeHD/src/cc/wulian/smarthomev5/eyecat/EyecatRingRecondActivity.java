@@ -34,8 +34,7 @@ public class EyecatRingRecondActivity extends Activity {
     private void loadRings(){
         long startTime = System.currentTimeMillis() - 1000 * 60 * 60* 24;
         long endTime = System.currentTimeMillis();
-        EyecatManager.getInstance().getICVSSUserInstance().equesGetRingRecordList(bid,startTime,endTime,100);
-        EyecatManager.getInstance().addPacketListener(ringListListener);
+        EyecatManager.getInstance().getICVSSUserInstance().equesGetRingRecordList(bid,0,0,100);
     }
     private EyecatManager.PacketListener ringListListener = new EyecatManager.PacketListener() {
 

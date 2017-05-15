@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.eques.icvss.utils.Method;
 
@@ -18,21 +17,26 @@ import cc.wulian.smarthomev5.R;
 
 public class EyecatSetupInfoActivity extends Activity {
     private TextView eyecat_return,setup_id,wifiname,version;
-    private String uid;
+    private String bid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.eyecat_activity_setup_info);
-        uid = getIntent().getStringExtra("uid");
-        Toast.makeText(this, uid, Toast.LENGTH_SHORT).show();
+        bid = getIntent().getStringExtra("bid");
         initView();
-        initData();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         EyecatManager.getInstance().addPacketListener(deviceInfoListern);
+        initData();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        EyecatManager.getInstance().removePacketListener(deviceInfoListern);
     }
 
     private void initView(){
@@ -48,7 +52,7 @@ public class EyecatSetupInfoActivity extends Activity {
         version = (TextView) findViewById(R.id.version);
     }
     private void initData(){
-        EyecatManager.getInstance().getICVSSUserInstance().equesGetDeviceInfo(uid);
+        EyecatManager.getInstance().getICVSSUserInstance().equesGetDeviceInfo(bid);
     }
     private EyecatManager.PacketListener deviceInfoListern = new EyecatManager.PacketListener() {
 
@@ -58,10 +62,15 @@ public class EyecatSetupInfoActivity extends Activity {
         }
 
         @Override
-        public void processPacket(JSONObject object) {
-            setup_id.setText(object.optString("from"));
-            wifiname.setText(object.optString("wifi_config"));
-            version.setText(object.optString("sw_version"));
+        public void processPacket(final JSONObject object) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    setup_id.setText(object.optString("from"));
+                    wifiname.setText(object.optString("wifi_config"));
+                    version.setText(object.optString("sw_version"));
+                }
+            });
         }
     };
 }
