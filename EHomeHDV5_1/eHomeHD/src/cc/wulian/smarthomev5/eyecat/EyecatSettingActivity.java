@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,6 +13,7 @@ import android.widget.ToggleButton;
 
 import com.alibaba.fastjson.JSON;
 import com.eques.icvss.utils.Method;
+import com.wulian.icam.view.album.AlbumActivity;
 import com.yuantuo.customview.ui.WLDialog;
 
 import org.json.JSONArray;
@@ -176,11 +176,6 @@ public class EyecatSettingActivity extends Activity {
         eyecatWarnHistory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                long startTime = System.currentTimeMillis() - 1000 * 60 * 60
-//                        * 24;
-//                long endTime = System.currentTimeMillis();
-//                EyecatManager.getInstance().getICVSSUserInstance().equesGetRingRecordList(bid,startTime,endTime,100);
-//                EyecatManager.getInstance().addPacketListener(ringListListener);
                 Intent intent = new Intent(EyecatSettingActivity.this,EyecatRingRecondActivity.class);
                 intent.putExtra("bid",bid);
                 startActivity(intent);
@@ -190,7 +185,10 @@ public class EyecatSettingActivity extends Activity {
         eyecatPicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                String picDir  = "/DingDong";
+                Intent intent = new Intent(EyecatSettingActivity.this,AlbumActivity.class);
+                intent.putExtra("picDir",picDir);
+                startActivity(intent);
             }
         });
         restartDeviceTextView = (TextView) findViewById(R.id.restart_tv);

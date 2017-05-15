@@ -190,7 +190,7 @@ public class EyecatVideoCallActivity extends Activity {
 
 			public void surfaceDestroyed(SurfaceHolder holder) {
 				Log.i("eyecat:","surfaceDestroyed");
-				hangUpCallNotCloseActivity();
+//				hangUpCallNotCloseActivity();
 			}
 		});
 		if (instance.isPortrait()) {
@@ -592,11 +592,13 @@ public class EyecatVideoCallActivity extends Activity {
 		if (callId != null) {
 			EyecatManager.getInstance().getICVSSUserInstance().equesCloseCall(callId);
 			isPlaying = false;
+			callId = null;
 		}
 	}
 	private void hangUpCall(){
 		if (callId != null) {
 			EyecatManager.getInstance().getICVSSUserInstance().equesCloseCall(callId);
+			callId = null;
 		}
 		finish();
 	}

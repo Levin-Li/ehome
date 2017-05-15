@@ -15,13 +15,28 @@ import cc.wulian.smarthomev5.R;
  */
 
 public class EyecatRingRecondActivity extends Activity {
+    private String bid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.eyecat_activity_ringrecond);
+        bid = getIntent().getStringExtra("bid");
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        EyecatManager.getInstance().addPacketListener(ringListListener);
+        loadRings();
+
+    }
+    private void loadRings(){
+        long startTime = System.currentTimeMillis() - 1000 * 60 * 60* 24;
+        long endTime = System.currentTimeMillis();
+        EyecatManager.getInstance().getICVSSUserInstance().equesGetRingRecordList(bid,startTime,endTime,100);
+        EyecatManager.getInstance().addPacketListener(ringListListener);
+    }
     private EyecatManager.PacketListener ringListListener = new EyecatManager.PacketListener() {
 
         @Override
