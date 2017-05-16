@@ -30,9 +30,7 @@ public class EyecatWarnningActivity extends Activity {
 
     }
     private void loadWarn(){
-        long startTime = System.currentTimeMillis() - 1000 * 60 * 60* 24;
-        long endTime = System.currentTimeMillis();
-        EyecatManager.getInstance().getICVSSUserInstance().equesGetAlarmMessageList(bid,startTime,endTime,100);
+        EyecatManager.getInstance().getICVSSUserInstance().equesGetAlarmMessageList(bid,0,0,100);
     }
     private EyecatManager.PacketListener alarmListListener = new EyecatManager.PacketListener() {
 
