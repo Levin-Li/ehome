@@ -27,14 +27,14 @@ public class EyecatRingRecondActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        EyecatManager.getInstance().addPacketListener(ringListListener);
         loadRings();
+        EyecatManager.getInstance().addPacketListener(ringListListener);
 
     }
     private void loadRings(){
         long startTime = System.currentTimeMillis() - 1000 * 60 * 60* 24;
         long endTime = System.currentTimeMillis();
-        EyecatManager.getInstance().getICVSSUserInstance().equesGetRingRecordList(bid,0,0,100);
+        EyecatManager.getInstance().getICVSSUserInstance().equesGetRingRecordList(bid,startTime,endTime,100);
     }
     private EyecatManager.PacketListener ringListListener = new EyecatManager.PacketListener() {
 

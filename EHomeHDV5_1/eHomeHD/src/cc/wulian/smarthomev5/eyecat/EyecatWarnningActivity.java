@@ -15,13 +15,25 @@ import cc.wulian.smarthomev5.R;
  */
 
 public class EyecatWarnningActivity extends Activity {
+    private String bid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.eyecat_activity_warnning);
+        bid = getIntent().getStringExtra("bid");
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadWarn();
+        EyecatManager.getInstance().addPacketListener(alarmListListener);
 
     }
-
+    private void loadWarn(){
+        long startTime = System.currentTimeMillis() - 1000 * 60 * 60* 24;
+        long endTime = System.currentTimeMillis();
+        EyecatManager.getInstance().getICVSSUserInstance().equesGetAlarmMessageList(bid,startTime,endTime,100);
+    }
     private EyecatManager.PacketListener alarmListListener = new EyecatManager.PacketListener() {
 
         @Override
