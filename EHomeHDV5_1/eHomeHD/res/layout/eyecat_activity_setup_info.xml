@@ -55,7 +55,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_margin="16dp"
-            android:text="000-e0d31a09615d"
+            android:text=""
             android:background="@color/white"
             />
 
@@ -84,7 +84,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_margin="16dp"
-            android:text="WULIAN"
+            android:text=""
             android:background="@color/white"
             />
 
@@ -113,7 +113,7 @@
             android:layout_centerVertical="true"
             android:layout_margin="16dp"
             android:id="@+id/version"
-            android:text="1.2.78(最新)"
+            android:text=""
             android:background="@color/white"
             />
 
