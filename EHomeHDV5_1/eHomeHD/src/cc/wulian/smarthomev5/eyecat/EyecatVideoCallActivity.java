@@ -190,7 +190,7 @@ public class EyecatVideoCallActivity extends Activity {
 
 			public void surfaceDestroyed(SurfaceHolder holder) {
 				Log.i("eyecat:","surfaceDestroyed");
-//				hangUpCallNotCloseActivity();
+				hangUpCallNotCloseActivity();
 			}
 		});
 		if (instance.isPortrait()) {
