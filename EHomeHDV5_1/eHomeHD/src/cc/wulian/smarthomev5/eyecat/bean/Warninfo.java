@@ -1,5 +1,7 @@
 package cc.wulian.smarthomev5.eyecat.bean;
 
+import org.json.JSONArray;
+
 import java.io.Serializable;
 
 /**
@@ -7,6 +9,7 @@ import java.io.Serializable;
  */
 
 public class Warninfo implements Serializable {
+
     public String getAid() {
         return aid;
     }
@@ -39,14 +42,6 @@ public class Warninfo implements Serializable {
         this.fid = fid;
     }
 
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-    }
-
     public String getBid() {
         return bid;
     }
@@ -63,14 +58,12 @@ public class Warninfo implements Serializable {
         this.pvid = pvid;
     }
 
-    public Warninfo(String aid, String time, String alarmDevSn, String[] fid, String bid, int type, String[] pvid) {
-        this.aid = aid;
-        this.time = time;
-        this.alarmDevSn = alarmDevSn;
-        this.fid = fid;
-        this.bid = bid;
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
         this.type = type;
-        this.pvid = pvid;
     }
 
     private String aid;
@@ -80,5 +73,8 @@ public class Warninfo implements Serializable {
     private String bid;
     private int type;
     private String[]  pvid;
+
+
+
 
 }
