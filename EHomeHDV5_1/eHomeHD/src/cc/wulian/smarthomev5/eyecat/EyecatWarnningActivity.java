@@ -2,13 +2,23 @@ package cc.wulian.smarthomev5.eyecat;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.eques.icvss.utils.Method;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import cc.wulian.app.model.device.category.Category;
 import cc.wulian.smarthomev5.R;
+import cc.wulian.smarthomev5.eyecat.bean.Warninfo;
 
 /**
  * Created by Administrator on 2017/4/28.
@@ -16,11 +26,14 @@ import cc.wulian.smarthomev5.R;
 
 public class EyecatWarnningActivity extends Activity {
     private String bid;
+    private List<Warninfo> list;
+    private Gson gson;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.eyecat_activity_warnning);
-        bid = getIntent().getStringExtra("bid");
+        gson = new Gson();
+        list = new ArrayList<>();
     }
     @Override
     protected void onResume() {
@@ -30,9 +43,7 @@ public class EyecatWarnningActivity extends Activity {
 
     }
     private void loadWarn(){
-        long startTime = System.currentTimeMillis() - 1000 * 60 * 60* 24;
-        long endTime = System.currentTimeMillis();
-        EyecatManager.getInstance().getICVSSUserInstance().equesGetAlarmMessageList(bid,startTime,endTime,100);
+        EyecatManager.getInstance().getICVSSUserInstance().equesGetAlarmMessageList(bid,0,0,100);
     }
     private EyecatManager.PacketListener alarmListListener = new EyecatManager.PacketListener() {
 
@@ -46,7 +57,45 @@ public class EyecatWarnningActivity extends Activity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(EyecatWarnningActivity.this, ""+object.toString(), Toast.LENGTH_SHORT).show();
+                    JSONArray alarms = object.optJSONArray("alarms");
+                    Warninfo warninfo =null;
+                    for(int i=0;i<alarms.length();i++){
+                        warninfo = list.get(i);
+                        JSONObject warn = null;
+                        try {
+                            warn = alarms.getJSONObject(i);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        warninfo.setBid(warn.optString("bid"));
+                        warninfo.setAid(warn.optString("aid"));
+                        warninfo.setTime(warn.optString("time"));
+                        warninfo.setAlarmDevSn(warn.optString("alarmDevSn"));
+                        warninfo.setType(warn.optInt("type"));
+                        JSONArray fids = warn.optJSONArray("fids");
+                        String[] fid = new String[fids.length()];
+                        for(int j=0;j<fids.length();j++){
+                            try {
+                                fid[j] = fids.getJSONObject(j).optString("fid");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        warninfo.setFid(fid);
+                        JSONArray pvids = warn.optJSONArray("pvid");
+                        String[] pvid = new String[fids.length()];
+                        for(int j=0;j<fids.length();j++){
+                            try {
+                                pvid[j] = pvids.getJSONObject(j).optString("pvid");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        warninfo.setPvid(pvid);
+                        list.add(warninfo);
+                    }
+
+
                 }
             });
 
