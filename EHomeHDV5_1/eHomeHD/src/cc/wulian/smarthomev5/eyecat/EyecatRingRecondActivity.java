@@ -8,14 +8,16 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.eques.icvss.utils.ELog;
 import com.eques.icvss.utils.Method;
+import com.yuantuo.customview.ui.WLDialog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -88,14 +90,29 @@ public class EyecatRingRecondActivity extends Activity {
         deleteImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<RingRecondinfo> data = adapter.getCheckedData();
-                if(data != null && data.size()>0){
-                    String fids[] = new String[data.size()];
-                    for(int i=0;i<data.size();i++){
-                        fids[i] = data.get(0).getFid();
+                WLDialog.Builder builder = new WLDialog.Builder(EyecatRingRecondActivity.this);
+                builder.setTitle("修改设备名");
+                builder.setMessage("确定删除选中记录？");
+                builder.setPositiveButton(android.R.string.ok);
+                builder.setNegativeButton(android.R.string.cancel);
+                builder.setListener(new WLDialog.MessageListener() {
+                    @Override
+                    public void onClickPositive(View contentViewLayout) {
+                        List<RingRecondinfo> data = adapter.getCheckedData();
+                        if(data != null && data.size()>0){
+                            String fids[] = new String[data.size()];
+                            for(int i=0;i<data.size();i++){
+                                fids[i] = data.get(0).getFid();
+                            }
+                            EyecatManager.getInstance().getICVSSUserInstance().equesDelRingRecord(bid,fids,0);
+                        }
                     }
-                    EyecatManager.getInstance().getICVSSUserInstance().equesDelRingRecord(bid,fids,0);
-                }
+
+                    @Override
+                    public void onClickNegative(View contentViewLayout) {
+                    }
+                });
+                builder.create().show();
             }
         });
         listView.setPullLoadEnable(true);
@@ -111,10 +128,12 @@ public class EyecatRingRecondActivity extends Activity {
                         checkAllImageView.setImageResource(R.drawable.device_led_adjust_normal);
                     }
                 }else{
+                    String bid = adapter.getItem(position-1).getBid();
+                    String fid = adapter.getItem(position-1).getFid();
+                    URL url = EyecatManager.getInstance().getICVSSUserInstance().equesGetRingPicture(fid,bid);
                     Intent intent = new Intent();
                     intent.setClass(EyecatRingRecondActivity.this,EyecatImageDetailActivity.class);
-                    intent.putExtra("bid",adapter.getItem(position).getBid());
-                    intent.putExtra("fid",adapter.getItem(position).getFid());
+                    intent.putExtra("url",url.toString());
                     startActivity(intent);
                 }
             }
@@ -136,16 +155,16 @@ public class EyecatRingRecondActivity extends Activity {
                 finish();
             }
         });
+
+        initData();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+    private void initData() {
         EyecatManager.getInstance().addPacketListener(ringListListener);
         EyecatManager.getInstance().addPacketListener(deleteRingListener);
         firstLoad();
-
     }
+
     private void firstLoad(){
         ringInfos.clear();
         Date now = new Date();
@@ -179,7 +198,7 @@ public class EyecatRingRecondActivity extends Activity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(EyecatRingRecondActivity.this,"删除成功",Toast.LENGTH_SHORT);
+                        ELog.showToastShort(EyecatRingRecondActivity.this, "删除成功");
                         adapter.removeCheckedData();
                     }
                 });
@@ -187,7 +206,7 @@ public class EyecatRingRecondActivity extends Activity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(EyecatRingRecondActivity.this,"删除失败",Toast.LENGTH_SHORT);
+                        ELog.showToastShort(EyecatRingRecondActivity.this,"删除失败");
                     }
                 });
             }

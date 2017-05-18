@@ -65,36 +65,27 @@
             android:layout_weight="1.5"
             android:clickable="true"
                 android:gravity="center_vertical|right"
-                android:visibility="gone" >
-
-                <TextView
-                    android:id="@+id/common_action_bar_right_icon_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="5dp"
-                    android:ellipsize="end"
-                    android:singleLine="true"
-                    android:text="@string/set_sound_notification_bell_prompt_choose_complete"
-                    android:textColor="@color/white"
-                    android:textSize="16sp" />
-
+                 >
                 <ImageView
-                    android:id="@+id/common_action_bar_right_icon"
+                    android:id="@+id/save_imageview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:src="@drawable/action_bar_menu" />
+                    android:src="@drawable/wl_menu_save_pressed" />
 
-                <LinearLayout
-                    android:id="@+id/common_action_bar_right_icon_custom"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:orientation="horizontal"
-                    android:paddingBottom="2dp"
-                    android:paddingTop="2dp" >
-                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        >
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/image_detail"
+            />
+    </LinearLayout>
+
 </LinearLayout>
