@@ -1,6 +1,7 @@
 package cc.wulian.smarthomev5.eyecat;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,11 +12,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eques.icvss.utils.Method;
+import com.yuantuo.customview.ui.WLDialog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -91,14 +94,30 @@ public class EyecatWarnningActivity extends Activity {
         deleteImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<Warninfo> data = adapter.getCheckedData();
-                if(data != null && data.size()>0){
-                    String aids[] = new String[data.size()];
-                    for(int i=0;i<data.size();i++){
-                        aids[i] = data.get(0).getAid();
+                WLDialog.Builder builder = new WLDialog.Builder(EyecatWarnningActivity.this);
+                builder.setTitle("修改设备名");
+                builder.setMessage("确定删除选中记录？");
+                builder.setPositiveButton(android.R.string.ok);
+                builder.setNegativeButton(android.R.string.cancel);
+                builder.setListener(new WLDialog.MessageListener() {
+                    @Override
+                    public void onClickPositive(View view) {
+                        List<Warninfo> data = adapter.getCheckedData();
+                        if(data != null && data.size()>0){
+                            String aids[] = new String[data.size()];
+                            for(int i=0;i<data.size();i++){
+                                aids[i] = data.get(0).getAid();
+                            }
+                            EyecatManager.getInstance().getICVSSUserInstance().equesDelAlarmMessage(bid,aids,0);
+                        }
                     }
-                    EyecatManager.getInstance().getICVSSUserInstance().equesDelAlarmMessage(bid,aids,0);
-                }
+
+                    @Override
+                    public void onClickNegative(View view) {
+
+                    }
+                });
+
             }
         });
         listView.setPullLoadEnable(true);
@@ -114,7 +133,14 @@ public class EyecatWarnningActivity extends Activity {
                         checkAllImageView.setImageResource(R.drawable.device_led_adjust_normal);
                     }
                 }else{
-
+                    String bid = adapter.getItem(position-1).getBid();
+                    JSONArray pvids  = adapter.getItem(position-1).getFid();
+                    String pvid = pvids.optString(0);
+                    URL url = EyecatManager.getInstance().getICVSSUserInstance().equesGetAlarmfileUrl(pvid,bid);
+                    Intent intent = new Intent();
+                    intent.setClass(EyecatWarnningActivity.this,EyecatImageDetailActivity.class);
+                    intent.putExtra("url",url.toString());
+                    startActivity(intent);
                 }
             }
         });
@@ -161,7 +187,7 @@ public class EyecatWarnningActivity extends Activity {
         EyecatManager.getInstance().removePacketListener(deleteAlarmListener);
     }
     private void loadAlarms(long start,long entTime){
-        EyecatManager.getInstance().getICVSSUserInstance().equesGetAlarmMessageList(bid,start,entTime,MAX_SIZE);
+        EyecatManager.getInstance().getICVSSUserInstance().equesGetAlarmMessageList(bid,0,0,MAX_SIZE);
     }
     private EyecatManager.PacketListener deleteAlarmListener = new EyecatManager.PacketListener(){
 
