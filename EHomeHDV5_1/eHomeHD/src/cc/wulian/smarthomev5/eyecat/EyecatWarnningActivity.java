@@ -53,6 +53,7 @@ public class EyecatWarnningActivity extends Activity {
         bid = getIntent().getStringExtra("bid");
         listView = (XListView)findViewById(R.id.lv_warnning);
         adapter = new WarnAdapter(this,warninfos);
+        listView.setAdapter(adapter);
         editTextView = (TextView)findViewById(R.id.eyecat_edit);
         returnTextView = (TextView)findViewById(R.id.eyecat_return);
         editPannel = (RelativeLayout) findViewById(R.id.edit_pannel);
@@ -160,7 +161,7 @@ public class EyecatWarnningActivity extends Activity {
         EyecatManager.getInstance().removePacketListener(deleteAlarmListener);
     }
     private void loadAlarms(long start,long entTime){
-        EyecatManager.getInstance().getICVSSUserInstance().equesGetAlarmMessageList(bid,0,0,MAX_SIZE);
+        EyecatManager.getInstance().getICVSSUserInstance().equesGetAlarmMessageList(bid,start,entTime,MAX_SIZE);
     }
     private EyecatManager.PacketListener deleteAlarmListener = new EyecatManager.PacketListener(){
 
@@ -212,10 +213,7 @@ public class EyecatWarnningActivity extends Activity {
                 }
             }
             warninfos.addAll(warnList);
-            Log.d("zcz","aid"+warninfos.get(0).getAid());
-            adapter.notifyDataSetChanged();
             if(warnList.size() >=MAX_SIZE ){
-                Log.d("zcz","aid1"+warninfos.get(0).getAid());
                 endTime = warnList.get(warnList.size() -1).getTime();
                 loadAlarms(startTime,endTime);
             }else{
