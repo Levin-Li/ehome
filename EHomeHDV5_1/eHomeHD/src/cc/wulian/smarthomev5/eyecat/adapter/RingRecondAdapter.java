@@ -109,5 +109,9 @@ public class RingRecondAdapter extends WLBaseAdapter<RingRecondinfo>{
         }
         return list;
     }
-
+    public void removeCheckedData(){
+        getData().removeAll(getCheckedData());
+        willDeleteMap.clear();
+        notifyDataSetChanged();
+    }
 }

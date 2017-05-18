@@ -43,13 +43,16 @@
             android:layout_alignParentEnd="true"
             android:layout_marginRight="17dp" />
     </RelativeLayout>
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
         <cc.wulian.smarthomev5.view.XListView.XListView
             android:id="@+id/lv_warnning"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:clipToPadding="false"
             android:divider="#00000000"
             android:dividerHeight="8dp"
@@ -88,5 +91,5 @@
                 android:layout_alignParentRight="true"
                 />
         </RelativeLayout>
-    </FrameLayout>
+    </LinearLayout>
 </LinearLayout>

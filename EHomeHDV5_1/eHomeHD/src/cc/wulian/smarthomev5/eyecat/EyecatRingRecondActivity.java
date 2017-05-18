@@ -7,6 +7,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.eques.icvss.utils.Method;
 
@@ -86,7 +87,14 @@ public class EyecatRingRecondActivity extends Activity {
         deleteImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                List<RingRecondinfo> data = adapter.getCheckedData();
+                if(data != null && data.size()>0){
+                    String fids[] = new String[data.size()];
+                    for(int i=0;i<data.size();i++){
+                        fids[i] = data.get(0).getFid();
+                    }
+                    EyecatManager.getInstance().getICVSSUserInstance().equesDelRingRecord(bid,fids,0);
+                }
             }
         });
         listView.setPullLoadEnable(true);
@@ -129,6 +137,7 @@ public class EyecatRingRecondActivity extends Activity {
     protected void onResume() {
         super.onResume();
         EyecatManager.getInstance().addPacketListener(ringListListener);
+        EyecatManager.getInstance().addPacketListener(deleteRingListener);
         firstLoad();
 
     }
@@ -146,10 +155,40 @@ public class EyecatRingRecondActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         EyecatManager.getInstance().removePacketListener(ringListListener);
+        EyecatManager.getInstance().removePacketListener(deleteRingListener);
     }
     private void loadRings(long start,long entTime){
         EyecatManager.getInstance().getICVSSUserInstance().equesGetRingRecordList(bid,startTime,endTime,MAX_SIZE);
     }
+    private EyecatManager.PacketListener deleteRingListener = new EyecatManager.PacketListener(){
+
+        @Override
+        public String getMenthod() {
+            return Method.METHOD_DELETE_RING;
+        }
+
+        @Override
+        public void processPacket(JSONObject object) {
+            String code = object.optString("code");
+            if("4000".equals(code)){
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(EyecatRingRecondActivity.this,"删除成功",Toast.LENGTH_SHORT);
+                        adapter.removeCheckedData();
+                    }
+                });
+            }else{
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(EyecatRingRecondActivity.this,"删除失败",Toast.LENGTH_SHORT);
+                    }
+                });
+            }
+        }
+    };
+
     private EyecatManager.PacketListener ringListListener = new EyecatManager.PacketListener() {
 
         @Override
@@ -164,7 +203,7 @@ public class EyecatRingRecondActivity extends Activity {
             for(int i=0;i<rings.length();i++){
                 try {
                     JSONObject ringObj = rings.getJSONObject(i);
-                    RingRecondinfo info = new RingRecondinfo(ringObj.optLong("time"),ringObj.optString("bid"),ringObj.optString("fid"));
+                    RingRecondinfo info = new RingRecondinfo(ringObj.optLong("ringtime"),ringObj.optString("bid"),ringObj.optString("fid"));
                     ringList.add(info);
                 } catch (JSONException e) {
                     e.printStackTrace();
