@@ -1,23 +1,24 @@
 package cc.wulian.smarthomev5.eyecat.adapter;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.net.URL;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cc.wulian.smarthomev5.R;
+import cc.wulian.smarthomev5.adapter.WLBaseAdapter;
 import cc.wulian.smarthomev5.eyecat.EyecatManager;
 import cc.wulian.smarthomev5.eyecat.bean.RingRecondinfo;
 
@@ -25,68 +26,92 @@ import cc.wulian.smarthomev5.eyecat.bean.RingRecondinfo;
  * Created by Administrator on 2017/5/9.
  */
 
-public class RingRecondAdapter extends BaseAdapter{
-    private Context context;
-    private List<RingRecondinfo> data;
-
-    public RingRecondAdapter(Context context, List<RingRecondinfo> data){
-        this.context = context;
-        this.data = data;
-    }
-    @Override
-    public int getCount() {
-        return data.size();
+public class RingRecondAdapter extends WLBaseAdapter<RingRecondinfo>{
+    private boolean isEdit = false;
+    private Map<Integer,Boolean> willDeleteMap =  new HashMap<Integer,Boolean>();
+    public RingRecondAdapter(Context context, List<RingRecondinfo> data) {
+        super(context, data);
     }
 
     @Override
-    public Object getItem(int position) {
-        return data.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
-        RingRecondinfo ringRecondinfo = data.get(position);
-        View view;
-        if (convertView == null) {
-            holder = new ViewHolder();
-            view = View.inflate(context, R.layout.item_ringrecond, null);
-            holder.iv_warnning = (ImageView) view.findViewById(R.id.iv_warnning);
-            holder.iv_play = (ImageView) view.findViewById(R.id.iv_play);
-            holder.ringrecond_status = (TextView) view.findViewById(R.id.ringrcond_status);
-            holder.tv_time = (TextView) view.findViewById(R.id.tv_time);
-            view.setTag(holder);
-        } else {
-            view = convertView;
-            holder = (ViewHolder) view.getTag();
+    protected void bindView(final Context context, View view, int pos, final RingRecondinfo item) {
+        final ImageView imageView = (ImageView)view.findViewById(R.id.iv_warnning);
+        ImageView checkImageView = (ImageView)view.findViewById(R.id.iv_check);
+        TextView timeTextView = (TextView)view.findViewById(R.id.tv_time);
+        String yyyyMMddHHmmss = "yyyy-MM-dd HH:mm:ss";
+        SimpleDateFormat fromat = new SimpleDateFormat(yyyyMMddHHmmss);
+        String timeText = fromat.format(new Date(item.getRingtime()));
+        timeTextView.setText(timeText);
+        if(isEdit){
+            checkImageView.setVisibility(View.VISIBLE);
+            Boolean isChecked = willDeleteMap.get(pos);
+            if(isChecked != null && isChecked == true) {
+                checkImageView.setImageResource(R.drawable.device_led_adjust_select);
+            }else{
+                checkImageView.setImageResource(R.drawable.device_led_adjust_normal);
+            }
+        }else{
+            checkImageView.setVisibility(View.GONE);
         }
-        URL url = EyecatManager.getInstance().getICVSSUserInstance().equesGetRingPicture(ringRecondinfo.getFid(),ringRecondinfo.getBid());
-        Picasso.with(context).load(url.toString()).into(holder.iv_warnning);
-        holder.tv_time.setText(getTime(ringRecondinfo.getRingtime()));
+        URL url = EyecatManager.getInstance().getICVSSUserInstance().equesGetRingPicture(item.getFid(),item.getBid());
+        ImageLoader.getInstance().displayImage(url.toString(),imageView );
+
+    }
+
+    @Override
+    protected View newView(Context context, LayoutInflater inflater, ViewGroup parent, int pos) {
+        View view = View.inflate(context, R.layout.item_ringrecond, null);
         return view;
     }
-
-    private static class ViewHolder {
-        private ImageView iv_warnning;
-        private ImageView iv_play;
-        private TextView ringrecond_status;
-        private TextView tv_time;
+    public boolean isEdit() {
+        return isEdit;
     }
-    private String getTime(Long time){
-        SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-        String d = format.format(time);
-        Date date = null;
-        try {
-            date=format.parse(d);
-        } catch (ParseException e) {
-            e.printStackTrace();
+    public void setEdit(boolean edit) {
+        isEdit = edit;
+    }
+    public void toggerEdit(){
+        if(isEdit){
+            isEdit = false;
+        }else{
+            isEdit = true;
         }
-        return date.toString();
+        notifyDataSetChanged();
+    }
+    public int checkedSize(){
+        return willDeleteMap.size();
+    }
+    public void toggleCheck(int position){
+        RingRecondinfo info = getItem(position);
+        Boolean isChecked = willDeleteMap.get(position);
+        if(isChecked != null && isChecked == true){
+            willDeleteMap.remove(position);
+        }else{
+            willDeleteMap.put(position,true);
+        }
+        notifyDataSetChanged();
+    }
+    public void uncheckAll(){
+        willDeleteMap.clear();
+        notifyDataSetChanged();
+    }
+    public void checkAll(){
+        for(int i = 0; i< getCount();i++){
+            willDeleteMap.put(i,true);
+        }
+        notifyDataSetChanged();
+    }
+
+    public List<RingRecondinfo> getCheckedData(){
+        ArrayList list = new ArrayList<RingRecondinfo>();
+        for(int position : willDeleteMap.keySet()){
+            list.add(getItem(position));
+        }
+        return list;
+    }
+    public void removeCheckedData(){
+        getData().removeAll(getCheckedData());
+        willDeleteMap.clear();
+        notifyDataSetChanged();
     }
 }

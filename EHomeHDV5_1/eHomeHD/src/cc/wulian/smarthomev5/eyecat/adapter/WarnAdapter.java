@@ -1,32 +1,19 @@
 package cc.wulian.smarthomev5.eyecat.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.utils.L;
-import com.squareup.picasso.Picasso;
-import com.wulian.icam.utils.ImageLoader;
-
-import org.json.JSONArray;
-
-import java.net.URI;
-import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 import cc.wulian.smarthomev5.R;
-import cc.wulian.smarthomev5.eyecat.EyecatManager;
-import cc.wulian.smarthomev5.eyecat.bean.RingRecondinfo;
 import cc.wulian.smarthomev5.eyecat.bean.Warninfo;
-import cc.wulian.smarthomev5.utils.DateUtil;
 
 /**
  * Created by Administrator on 2017/5/9.
@@ -72,28 +59,7 @@ public class WarnAdapter extends BaseAdapter{
             view = convertView;
             holder = (ViewHolder) view.getTag();
         }
-        JSONArray pvids = warninfo.getPvid();
 
-        Log.d("zcz",pvids.optString(0));
-        String pvid = pvids.optString(0);
-        URL url= EyecatManager.getInstance().getICVSSUserInstance().equesGetThumbUrl(pvid,warninfo.getBid());
-        String picpath = url.toString();
-        Log.d("zcz",picpath);
-        ImageLoader imageLoader = new ImageLoader(context);
-        Bitmap bitmap= imageLoader.loadImage(picpath, new ImageLoader.OnImageLoaderListener() {
-            @Override
-            public void onImageLoader(Bitmap bitmap, String url) {
-
-            }
-        },150,75);
-        holder.iv_warnning.setImageBitmap(bitmap);
-        holder.tv_time.setText(DateUtil.getFormatIMGTime(warninfo.getTime()));
-        int type = warninfo.getType();
-        if(type == 5){
-            holder.iv_play.setVisibility(View.VISIBLE);
-        }else{
-            holder.iv_play.setVisibility(View.INVISIBLE);
-        }
         return view;
     }
 
@@ -103,5 +69,16 @@ public class WarnAdapter extends BaseAdapter{
         private TextView tv_warning;
         private TextView tv_time;
     }
+    private String getTime(Long time){
+        SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+        String d = format.format(time);
+        Date date = null;
+        try {
+            date=format.parse(d);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date.toString();
+    }
 }
