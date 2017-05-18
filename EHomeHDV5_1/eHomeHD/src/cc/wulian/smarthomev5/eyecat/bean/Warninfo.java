@@ -10,6 +10,25 @@ import java.io.Serializable;
 
 public class Warninfo implements Serializable {
 
+
+    public Warninfo(String aid, Long time, String alarmDevSn, JSONArray fid, String bid, int type, JSONArray pvid) {
+        this.aid = aid;
+        this.time = time;
+        this.alarmDevSn = alarmDevSn;
+        this.fid = fid;
+        this.bid = bid;
+        this.type = type;
+        this.pvid = pvid;
+    }
+
+    private String aid;
+    private Long time;
+    private String alarmDevSn;
+    private JSONArray fid;
+    private String bid;
+    private int type;
+    private JSONArray  pvid;
+
     public String getAid() {
         return aid;
     }
@@ -18,13 +37,7 @@ public class Warninfo implements Serializable {
         this.aid = aid;
     }
 
-    public String getTime() {
-        return time;
-    }
 
-    public void setTime(String time) {
-        this.time = time;
-    }
 
     public String getAlarmDevSn() {
         return alarmDevSn;
@@ -34,11 +47,11 @@ public class Warninfo implements Serializable {
         this.alarmDevSn = alarmDevSn;
     }
 
-    public String[] getFid() {
+    public JSONArray getFid() {
         return fid;
     }
 
-    public void setFid(String[] fid) {
+    public void setFid(JSONArray fid) {
         this.fid = fid;
     }
 
@@ -50,11 +63,11 @@ public class Warninfo implements Serializable {
         this.bid = bid;
     }
 
-    public String[] getPvid() {
+    public JSONArray getPvid() {
         return pvid;
     }
 
-    public void setPvid(String[] pvid) {
+    public void setPvid(JSONArray pvid) {
         this.pvid = pvid;
     }
 
@@ -66,13 +79,15 @@ public class Warninfo implements Serializable {
         this.type = type;
     }
 
-    private String aid;
-    private String time;
-    private String alarmDevSn;
-    private String[] fid;
-    private String bid;
-    private int type;
-    private String[]  pvid;
+    public Long getTime() {
+        return time;
+    }
+
+    public void setTime(Long time) {
+        this.time = time;
+    }
+
+
 
 
 

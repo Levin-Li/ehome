@@ -182,7 +182,7 @@ public class EyecatRingRecondActivity extends Activity {
         EyecatManager.getInstance().removePacketListener(deleteRingListener);
     }
     private void loadRings(long start,long entTime){
-        EyecatManager.getInstance().getICVSSUserInstance().equesGetRingRecordList(bid,startTime,endTime,MAX_SIZE);
+        EyecatManager.getInstance().getICVSSUserInstance().equesGetRingRecordList(bid,start,entTime,MAX_SIZE);
     }
     private EyecatManager.PacketListener deleteRingListener = new EyecatManager.PacketListener(){
 
