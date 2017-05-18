@@ -11,8 +11,23 @@ import java.io.Serializable;
 public class Warninfo implements Serializable {
 
 
+    public Warninfo(String aid, Long time, String alarmDevSn, JSONArray fid, String bid, int type, JSONArray pvid) {
+        this.aid = aid;
+        this.time = time;
+        this.alarmDevSn = alarmDevSn;
+        this.fid = fid;
+        this.bid = bid;
+        this.type = type;
+        this.pvid = pvid;
+    }
 
     private String aid;
+    private Long time;
+    private String alarmDevSn;
+    private JSONArray fid;
+    private String bid;
+    private int type;
+    private JSONArray  pvid;
 
     public String getAid() {
         return aid;
@@ -72,12 +87,7 @@ public class Warninfo implements Serializable {
         this.time = time;
     }
 
-    private Long time;
-    private String alarmDevSn;
-    private JSONArray fid;
-    private String bid;
-    private int type;
-    private JSONArray  pvid;
+
 
 
 
