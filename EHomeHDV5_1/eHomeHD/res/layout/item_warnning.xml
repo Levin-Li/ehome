@@ -14,12 +14,13 @@
             android:layout_height="wrap_content">
             <ImageView
                 android:id="@+id/iv_warnning"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="150dp"
+                android:layout_height="75dp"
                 android:layout_margin="20dp"
-                android:src="@drawable/suolue"
+
                 />
             <ImageView
+                android:id="@+id/iv_play"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

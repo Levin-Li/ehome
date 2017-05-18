@@ -10,6 +10,10 @@ import java.io.Serializable;
 
 public class Warninfo implements Serializable {
 
+
+
+    private String aid;
+
     public String getAid() {
         return aid;
     }
@@ -18,13 +22,7 @@ public class Warninfo implements Serializable {
         this.aid = aid;
     }
 
-    public String getTime() {
-        return time;
-    }
 
-    public void setTime(String time) {
-        this.time = time;
-    }
 
     public String getAlarmDevSn() {
         return alarmDevSn;
@@ -34,11 +32,11 @@ public class Warninfo implements Serializable {
         this.alarmDevSn = alarmDevSn;
     }
 
-    public String[] getFid() {
+    public JSONArray getFid() {
         return fid;
     }
 
-    public void setFid(String[] fid) {
+    public void setFid(JSONArray fid) {
         this.fid = fid;
     }
 
@@ -50,11 +48,11 @@ public class Warninfo implements Serializable {
         this.bid = bid;
     }
 
-    public String[] getPvid() {
+    public JSONArray getPvid() {
         return pvid;
     }
 
-    public void setPvid(String[] pvid) {
+    public void setPvid(JSONArray pvid) {
         this.pvid = pvid;
     }
 
@@ -66,13 +64,20 @@ public class Warninfo implements Serializable {
         this.type = type;
     }
 
-    private String aid;
-    private String time;
+    public Long getTime() {
+        return time;
+    }
+
+    public void setTime(Long time) {
+        this.time = time;
+    }
+
+    private Long time;
     private String alarmDevSn;
-    private String[] fid;
+    private JSONArray fid;
     private String bid;
     private int type;
-    private String[]  pvid;
+    private JSONArray  pvid;
 
 
 
