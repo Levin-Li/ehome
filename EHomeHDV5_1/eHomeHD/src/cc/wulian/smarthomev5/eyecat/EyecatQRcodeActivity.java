@@ -7,6 +7,8 @@ import android.graphics.Bitmap;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -37,9 +39,17 @@ public class EyecatQRcodeActivity extends Activity implements View.OnClickListen
     private ImageView eyecat_qrcode;
     private LinearLayout eyecat_return;
     public static final String TAG = "EyecatQRcodeActivity";
-
     private String reqId;
-    String baseUrl = "http://testv2.wulian.cc:52181";
+    private Handler handler = new Handler(Looper.getMainLooper());
+    private Runnable errorRunnable = new Runnable() {
+        @Override
+        public void run() {
+            Intent i = new Intent(EyecatQRcodeActivity.this, EyecatBindActivity.class);
+            i.putExtra("flag", false);
+            startActivity(i);
+            finish();
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +72,7 @@ public class EyecatQRcodeActivity extends Activity implements View.OnClickListen
         iknow.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 alertDialog.dismiss();
+                handler.postDelayed(errorRunnable,3*60*1000);
             }
         });
 
@@ -92,6 +103,12 @@ public class EyecatQRcodeActivity extends Activity implements View.OnClickListen
         super.onPause();
         EyecatManager.getInstance().addPacketListener(scanReqListener);
         EyecatManager.getInstance().removePacketListener(scanResultListener);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacks(errorRunnable);
     }
 
     public void onClick(View v) {
@@ -130,6 +147,7 @@ public class EyecatQRcodeActivity extends Activity implements View.OnClickListen
         @Override
         public void processPacket(JSONObject object) {
             reqId = object.optString(Method.ATTR_REQID);
+            handler.removeCallbacks(errorRunnable);
             JSONObject extra = object.optJSONObject(Method.ATTR_EXTRA);
             if(extra != null){
                 final String oldbdy = extra.optString(Method.ATTR_OLDBDY);
@@ -177,6 +195,8 @@ public class EyecatQRcodeActivity extends Activity implements View.OnClickListen
 
         @Override
         public void processPacket(JSONObject object) {
+            handler.removeCallbacks(errorRunnable);
+
             String code = object.optString(Method.ATTR_EQUES_SDK_CODE);
             if("4407".equals(code)){
                 runOnUiThread(new Runnable() {
