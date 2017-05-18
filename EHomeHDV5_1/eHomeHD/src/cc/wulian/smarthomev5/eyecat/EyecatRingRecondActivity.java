@@ -1,6 +1,7 @@
 package cc.wulian.smarthomev5.eyecat;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -110,7 +111,11 @@ public class EyecatRingRecondActivity extends Activity {
                         checkAllImageView.setImageResource(R.drawable.device_led_adjust_normal);
                     }
                 }else{
-
+                    Intent intent = new Intent();
+                    intent.setClass(EyecatRingRecondActivity.this,EyecatImageDetailActivity.class);
+                    intent.putExtra("bid",adapter.getItem(position).getBid());
+                    intent.putExtra("fid",adapter.getItem(position).getFid());
+                    startActivity(intent);
                 }
             }
         });
