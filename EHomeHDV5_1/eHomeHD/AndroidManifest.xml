@@ -1498,7 +1498,7 @@
             android:theme="@android:style/Theme.NoTitleBar"
             ></activity>
         <activity
-            android:name="cc.wulian.smarthomev5.eyecat.EyecatMonitoringActivity"
+            android:name="cc.wulian.smarthomev5.eyecat.EyecatImageDetailActivity"
             android:alwaysRetainTaskState="true"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@android:style/Theme.NoTitleBar"
