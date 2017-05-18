@@ -55,5 +55,38 @@
             android:dividerHeight="8dp"
             android:paddingBottom="8dp"
             android:paddingTop="8dp" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:visibility="gone"
+            android:background="@color/black"
+            android:layout_gravity="bottom"
+            android:id="@+id/edit_pannel"
+            android:gravity="center_vertical"
+            android:padding="5dp"
+            android:layout_height="50dp">
+            <ImageView
+                android:id="@+id/edit_check_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/device_led_adjust_normal"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/edit_check_all"
+                android:text="全选"
+                />
+            <ImageView
+                android:id="@+id/edit_delete_select"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:src="@drawable/device_setting_more_delate"
+                android:layout_alignParentRight="true"
+                />
+        </RelativeLayout>
     </FrameLayout>
 </LinearLayout>

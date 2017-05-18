@@ -2,13 +2,26 @@ package cc.wulian.smarthomev5.eyecat;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.eques.icvss.utils.Method;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import cc.wulian.smarthomev5.R;
+import cc.wulian.smarthomev5.eyecat.adapter.RingRecondAdapter;
+import cc.wulian.smarthomev5.eyecat.bean.RingRecondinfo;
+import cc.wulian.smarthomev5.view.XListView.XListView;
 
 /**
  * Created by Administrator on 2017/4/28.
@@ -16,25 +29,126 @@ import cc.wulian.smarthomev5.R;
 
 public class EyecatRingRecondActivity extends Activity {
     private String bid;
+    private XListView listView;
+    private RingRecondAdapter adapter;
+    private List<RingRecondinfo> ringInfos = new ArrayList<RingRecondinfo>();
+    public static final int TIME_SIZE =24*60*60*1000;
+    public static final int MAX_SIZE =1000;
+    private long startTime;
+    private long endTime;
+    private TextView editTextView;
+    private TextView returnTextView;
+    private RelativeLayout editPannel;
+    private ImageView  checkAllImageView;
+    private ImageView deleteImageView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.eyecat_activity_ringrecond);
         bid = getIntent().getStringExtra("bid");
+        listView = (XListView)findViewById(R.id.lv_warnning);
+        adapter = new RingRecondAdapter(this,new ArrayList<RingRecondinfo>());
+        listView.setAdapter(adapter);
+        editTextView = (TextView)findViewById(R.id.eyecat_edit);
+        returnTextView = (TextView)findViewById(R.id.eyecat_return);
+        editPannel = (RelativeLayout) findViewById(R.id.edit_pannel);
+        editTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Object tag = editTextView.getTag();
+                if(tag == null) {
+                    editTextView.setTag(true);
+                    editTextView.setText("取消");
+                    editPannel.setVisibility(View.VISIBLE);
+                    adapter.toggerEdit();
+                }else{
+                    editTextView.setTag(null);
+                    editTextView.setText("编辑");
+                    editPannel.setVisibility(View.GONE);
+                    adapter.toggerEdit();
+                }
+            }
+        });
+        checkAllImageView = (ImageView) findViewById(R.id.edit_check_all);
+        checkAllImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(adapter.checkedSize() >= adapter.getCount()){
+                    adapter.uncheckAll();
+                    checkAllImageView.setImageResource(R.drawable.device_led_adjust_normal);
+                }else{
+                    adapter.checkAll();
+                    checkAllImageView.setImageResource(R.drawable.device_led_adjust_select);
+                }
+            }
+        });
+        deleteImageView = (ImageView) findViewById(R.id.edit_delete_select);
+        deleteImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+            }
+        });
+        listView.setPullLoadEnable(true);
+        listView.setPullRefreshEnable(true);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(adapter.isEdit()){
+                    adapter.toggleCheck(position-1);
+                    if(adapter.checkedSize() >= adapter.getCount()){
+                        checkAllImageView.setImageResource(R.drawable.device_led_adjust_select);
+                    }else{
+                        checkAllImageView.setImageResource(R.drawable.device_led_adjust_normal);
+                    }
+                }else{
+
+                }
+            }
+        });
+        listView.setXListViewListener(new XListView.IXListViewListener() {
+            @Override
+            public void onRefresh() {
+                firstLoad();
+            }
+
+            @Override
+            public void onLoadMore() {
+                loadRings(startTime,endTime);
+            }
+        });
+        returnTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        loadRings();
         EyecatManager.getInstance().addPacketListener(ringListListener);
+        firstLoad();
 
     }
-    private void loadRings(){
-        long startTime = System.currentTimeMillis() - 1000 * 60 * 60* 24;
-        long endTime = System.currentTimeMillis();
-        EyecatManager.getInstance().getICVSSUserInstance().equesGetRingRecordList(bid,startTime,endTime,100);
+    private void firstLoad(){
+        ringInfos.clear();
+        Date now = new Date();
+        now.setHours(0);
+        now.setMinutes(0);
+        now.setSeconds(0);
+        startTime = now.getTime();
+        endTime = new Date().getTime();
+        loadRings(startTime,endTime);
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EyecatManager.getInstance().removePacketListener(ringListListener);
+    }
+    private void loadRings(long start,long entTime){
+        EyecatManager.getInstance().getICVSSUserInstance().equesGetRingRecordList(bid,startTime,endTime,MAX_SIZE);
     }
     private EyecatManager.PacketListener ringListListener = new EyecatManager.PacketListener() {
 
@@ -45,12 +159,33 @@ public class EyecatRingRecondActivity extends Activity {
 
         @Override
         public void processPacket(final JSONObject object) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(EyecatRingRecondActivity.this, ""+object.toString(), Toast.LENGTH_SHORT).show();
+            JSONArray rings = object.optJSONArray("rings");
+            final List<RingRecondinfo> ringList = new ArrayList<RingRecondinfo>();
+            for(int i=0;i<rings.length();i++){
+                try {
+                    JSONObject ringObj = rings.getJSONObject(i);
+                    RingRecondinfo info = new RingRecondinfo(ringObj.optLong("time"),ringObj.optString("bid"),ringObj.optString("fid"));
+                    ringList.add(info);
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            });
+            }
+            ringInfos.addAll(ringList);
+            if(ringList.size() >=MAX_SIZE ){
+                endTime = ringList.get(ringList.size() -1).getRingtime();
+                loadRings(startTime,endTime);
+            }else{
+                endTime = startTime;
+                startTime = startTime- TIME_SIZE;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        listView.stopLoadMore();
+                        listView.stopRefresh();
+                        adapter.swapData(ringInfos);
+                }
+                });
+            }
 
         }
     };

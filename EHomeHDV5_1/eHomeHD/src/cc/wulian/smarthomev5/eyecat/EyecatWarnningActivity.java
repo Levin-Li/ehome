@@ -2,12 +2,8 @@ package cc.wulian.smarthomev5.eyecat;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.eques.icvss.utils.Method;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,7 +12,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import cc.wulian.app.model.device.category.Category;
 import cc.wulian.smarthomev5.R;
 import cc.wulian.smarthomev5.eyecat.bean.Warninfo;
 
@@ -27,12 +22,10 @@ import cc.wulian.smarthomev5.eyecat.bean.Warninfo;
 public class EyecatWarnningActivity extends Activity {
     private String bid;
     private List<Warninfo> list;
-    private Gson gson;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.eyecat_activity_warnning);
-        gson = new Gson();
         list = new ArrayList<>();
     }
     @Override

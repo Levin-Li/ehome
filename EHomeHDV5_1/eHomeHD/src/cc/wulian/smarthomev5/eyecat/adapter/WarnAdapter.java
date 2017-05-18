@@ -7,17 +7,12 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
-
-import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 import cc.wulian.smarthomev5.R;
-import cc.wulian.smarthomev5.eyecat.EyecatManager;
-import cc.wulian.smarthomev5.eyecat.bean.RingRecondinfo;
 import cc.wulian.smarthomev5.eyecat.bean.Warninfo;
 
 /**
