@@ -117,7 +117,7 @@ public class EyecatWarnningActivity extends Activity {
 
                     }
                 });
-
+                builder.create().show();
             }
         });
         listView.setPullLoadEnable(true);
@@ -187,7 +187,7 @@ public class EyecatWarnningActivity extends Activity {
         EyecatManager.getInstance().removePacketListener(deleteAlarmListener);
     }
     private void loadAlarms(long start,long entTime){
-        EyecatManager.getInstance().getICVSSUserInstance().equesGetAlarmMessageList(bid,0,0,MAX_SIZE);
+        EyecatManager.getInstance().getICVSSUserInstance().equesGetAlarmMessageList(bid,start,entTime,MAX_SIZE);
     }
     private EyecatManager.PacketListener deleteAlarmListener = new EyecatManager.PacketListener(){
 
@@ -226,34 +226,37 @@ public class EyecatWarnningActivity extends Activity {
 
         @Override
         public void processPacket(final JSONObject object) {
-            JSONArray alarms = object.optJSONArray("alarms");
-            Log.d("zcz",alarms.toString());
-            final List<Warninfo> warnList = new ArrayList<Warninfo>();
-            for(int i=0;i<alarms.length();i++){
-                try {
-                    JSONObject warnObj = alarms.getJSONObject(i);
-                    Warninfo info = new Warninfo(warnObj.optString("aid"),warnObj.optLong("time"),warnObj.optString("alarmDevSn"),warnObj.optJSONArray("fid"),warnObj.optString("bid"),warnObj.optInt("type"),warnObj.optJSONArray("pvid"));
-                    warnList.add(info);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            warninfos.addAll(warnList);
-            if(warnList.size() >=MAX_SIZE ){
-                endTime = warnList.get(warnList.size() -1).getTime();
-                loadAlarms(startTime,endTime);
-            }else{
-                endTime = startTime;
-                startTime = startTime- TIME_SIZE;
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONArray alarms = object.optJSONArray("alarms");
+                    Log.d("zcz",alarms.toString());
+                    final List<Warninfo> warnList = new ArrayList<Warninfo>();
+                    for(int i=0;i<alarms.length();i++){
+                        try {
+                            JSONObject warnObj = alarms.getJSONObject(i);
+                            Warninfo info = new Warninfo(warnObj.optString("aid"),warnObj.optLong("time"),warnObj.optString("alarmDevSn"),warnObj.optJSONArray("fid"),warnObj.optString("bid"),warnObj.optInt("type"),warnObj.optJSONArray("pvid"));
+                            warnList.add(info);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    warninfos.addAll(warnList);
+                    if(warnList.size() >=MAX_SIZE ){
+                        endTime = warnList.get(warnList.size() -1).getTime();
+                        loadAlarms(startTime,endTime);
+                    }else{
+                        endTime = startTime;
+                        startTime = startTime- TIME_SIZE;
                         listView.stopLoadMore();
                         listView.stopRefresh();
                         adapter.swapData(warninfos);
+
                     }
-                });
-            }
+                }
+            });
+
+
 
         }
     };

@@ -112,7 +112,7 @@ public class EyecatRingRecondActivity extends Activity {
                     public void onClickNegative(View contentViewLayout) {
                     }
                 });
-                builder.create().show();
+
             }
         });
         listView.setPullLoadEnable(true);
