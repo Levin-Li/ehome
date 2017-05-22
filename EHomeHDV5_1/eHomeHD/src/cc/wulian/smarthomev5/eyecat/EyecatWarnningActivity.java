@@ -226,6 +226,7 @@ public class EyecatWarnningActivity extends Activity {
 
         @Override
         public void processPacket(final JSONObject object) {
+            final List<Warninfo> warnList = null;
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -241,21 +242,27 @@ public class EyecatWarnningActivity extends Activity {
                             e.printStackTrace();
                         }
                     }
-                    warninfos.addAll(warnList);
-                    if(warnList.size() >=MAX_SIZE ){
-                        endTime = warnList.get(warnList.size() -1).getTime();
-                        loadAlarms(startTime,endTime);
-                    }else{
-                        endTime = startTime;
-                        startTime = startTime- TIME_SIZE;
+
+                }
+            });
+            warninfos.addAll(warnList);
+            if(warnList.size() >=MAX_SIZE ){
+                endTime = warnList.get(warnList.size() -1).getTime();
+                loadAlarms(startTime,endTime);
+            }else{
+                endTime = startTime;
+                startTime = startTime- TIME_SIZE;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
                         listView.stopLoadMore();
                         listView.stopRefresh();
                         adapter.swapData(warninfos);
-
                     }
-                }
-            });
+                });
 
+
+            }
 
 
         }

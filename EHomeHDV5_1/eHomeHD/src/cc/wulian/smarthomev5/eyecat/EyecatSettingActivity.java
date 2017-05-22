@@ -30,6 +30,7 @@ import cc.wulian.ihome.wan.util.StringUtil;
 import cc.wulian.ihome.wan.util.TaskExecutor;
 import cc.wulian.smarthomev5.R;
 import cc.wulian.smarthomev5.account.WLUserManager;
+import cc.wulian.smarthomev5.eyecat.bean.EyecatPhotoActivity;
 import cc.wulian.smarthomev5.service.html5plus.plugins.SmarthomeFeatureImpl;
 import cc.wulian.smarthomev5.tools.DevicesUserManage;
 
@@ -200,9 +201,12 @@ public class EyecatSettingActivity extends Activity {
 //                Intent intent = new Intent(EyecatSettingActivity.this,AlbumActivity.class);
 //                intent.putExtra("picDir",picDir);
 //                startActivity(intent);
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory().getAbsoluteFile()+"/DingDong")), "image/jpeg");
+//                Intent intent = new Intent(Intent.ACTION_VIEW);
+//                intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory().getAbsoluteFile()+"/DingDong")), "image/jpeg");
+                Intent intent = new Intent(EyecatSettingActivity.this, EyecatPhotoActivity.class);
+                intent.putExtra("uri",Uri.fromFile(new File(Environment.getExternalStorageDirectory().getAbsoluteFile()+"/DingDong")).toString());
                 startActivity(intent);
+
             }
         });
         restartDeviceTextView = (TextView) findViewById(R.id.restart_tv);
